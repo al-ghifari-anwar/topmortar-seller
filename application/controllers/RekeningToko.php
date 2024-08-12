@@ -80,7 +80,7 @@ class RekeningToko extends CI_Controller
                 $result = [
                     'code' => 200,
                     'status' => 'ok',
-                    'msg' => 'Sukses menyimpan nomor rekening',
+                    'msg' => 'Sukses mengambil nomor rekening',
                     'data' => $getRekening
                 ];
 
