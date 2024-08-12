@@ -59,3 +59,5 @@ $route['api/request-otp'] = "Auth/send_otp";
 $route['api/verify-otp'] = "Auth/verify_otp";
 $route['api/auth/reset'] = "Auth/reset_password";
 $route['api/auth/login'] = "Auth/login";
+//Bank
+$route['api/bank'] = 'Bank/get';
