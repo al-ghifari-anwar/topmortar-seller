@@ -61,3 +61,6 @@ $route['api/auth/reset'] = "Auth/reset_password";
 $route['api/auth/login'] = "Auth/login";
 //Bank
 $route['api/bank'] = 'Bank/get';
+// Rekening Toko
+$route['api/rekeningtoko'] = 'RekeningToko/create';
+$route['api/rekeningtoko/contact/(:num)'] = 'RekeningToko/getByIdContact/$1';
