@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Auth extends CI_Controller
+class Bank extends CI_Controller
 {
     public function __construct()
     {
@@ -22,22 +22,33 @@ class Auth extends CI_Controller
         $this->output->set_content_type('application/json');
         $post = json_decode(file_get_contents('php://input'), true) != null ? json_decode(file_get_contents('php://input'), true) : $this->input->post();
 
-        $getBank = $this->MBank->get();
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
-        if ($getBank == null) {
-            $result = [
-                'code' => 400,
-                'status' => 'failed',
-                'msg' => 'Tidak ada data'
-            ];
+            $getBank = $this->MBank->get();
 
-            $this->output->set_output(json_encode($result));
+            if ($getBank == null) {
+                $result = [
+                    'code' => 400,
+                    'status' => 'failed',
+                    'msg' => 'Tidak ada data'
+                ];
+
+                $this->output->set_output(json_encode($result));
+            } else {
+                $result = [
+                    'code' => 200,
+                    'status' => 'ok',
+                    'msg' => 'Sukses mengambil data',
+                    'data' => $getBank
+                ];
+
+                $this->output->set_output(json_encode($result));
+            }
         } else {
             $result = [
-                'code' => 200,
-                'status' => 'ok',
-                'msg' => 'Sukses mengambil data',
-                'data' => $getBank
+                'code' => 404,
+                'status' => 'failed',
+                'msg' => 'Not Found'
             ];
 
             $this->output->set_output(json_encode($result));
