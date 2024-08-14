@@ -81,7 +81,7 @@ class RekeningToko extends CI_Controller
                     'code' => 200,
                     'status' => 'ok',
                     'msg' => 'Sukses mengambil nomor rekening',
-                    'data' => $getRekening
+                    'data' => array($getRekening)
                 ];
 
                 $this->output->set_output(json_encode($result));
