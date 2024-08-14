@@ -64,6 +64,6 @@ $route['api/bank'] = 'Bank/get';
 // Rekening Toko
 $route['api/rekeningtoko'] = 'RekeningToko/create';
 $route['api/rekeningtoko/contact/(:num)'] = 'RekeningToko/getByIdContact/$1';
-$route['api/rekeningtoko/(:num)'] = 'RekeingToko/update/$1';
+$route['api/rekeningtoko/(:num)'] = 'RekeningToko/update/$1';
 // Claim
 $route['api/voucher/claim'] = 'VoucherTukang/claim';
