@@ -96,4 +96,41 @@ class RekeningToko extends CI_Controller
             $this->output->set_output(json_encode($result));
         }
     }
+
+    public function update($id_rekening_toko)
+    {
+        $this->output->set_content_type('application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
+
+            $getRekening = $this->MRekeningToko->update($id_rekening_toko);
+
+            if (!$getRekening) {
+                $result = [
+                    'code' => 400,
+                    'status' => 'failed',
+                    'msg' => 'Gagal menupdate rekening'
+                ];
+
+                $this->output->set_output(json_encode($result));
+            } else {
+
+                $result = [
+                    'code' => 200,
+                    'status' => 'ok',
+                    'msg' => 'Sukses mengedit nomor rekening'
+                ];
+
+                $this->output->set_output(json_encode($result));
+            }
+        } else {
+            $result = [
+                'code' => 404,
+                'status' => 'failed',
+                'msg' => 'Not Found'
+            ];
+
+            $this->output->set_output(json_encode($result));
+        }
+    }
 }

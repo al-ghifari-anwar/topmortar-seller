@@ -18,7 +18,7 @@ class MRekeningToko extends CI_Model
 
     public function getById($id_rekening_toko)
     {
-        $result = $this->db->get_where('tb_rekening_toko', ['id_rekening_toko' => $id_rekening_toko])->row_array();
+        $result = $this->db->get_where('tb_rekening_toko', ['id_rekening_toko' => $id_rekening_toko])->result_array();
 
         return $result;
     }
@@ -42,6 +42,21 @@ class MRekeningToko extends CI_Model
         $this->updated_at = date("Y-m-d H:i:s");
 
         $result = $this->db->insert('tb_rekening_toko', $this);
+
+        return $result;
+    }
+
+    public function update($id_rekening_toko)
+    {
+        date_default_timezone_set('Asia/Jakarta');
+        $post = json_decode(file_get_contents('php://input'), true) != null ? json_decode(file_get_contents('php://input'), true) : $this->input->post();
+        $this->id_contact = $post['id_contact'];
+        $this->to_name = $post['to_name'];
+        $this->id_bank = $post['id_bank'];
+        $this->to_account = $post['to_account'];
+        $this->updated_at = date("Y-m-d H:i:s");
+
+        $result = $this->db->update('tb_rekening_toko', $this, ['id_rekening_toko' => $id_rekening_toko]);
 
         return $result;
     }
