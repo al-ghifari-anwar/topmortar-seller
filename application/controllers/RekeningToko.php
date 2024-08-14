@@ -101,7 +101,7 @@ class RekeningToko extends CI_Controller
     {
         $this->output->set_content_type('application/json');
 
-        if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $getRekening = $this->MRekeningToko->update($id_rekening_toko);
 
