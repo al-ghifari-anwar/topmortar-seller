@@ -37,7 +37,7 @@ class VoucherTukang extends CI_Controller
 
         $getTukang = $this->db->get_where('tb_tukang', ['id_tukang' => $id_tukang])->row_array();
         $nomorhp_tukang = $getTukang['nomorhp'];
-        $nama_tukang = $getTukang['nomorhp'];
+        $nama_tukang = $getTukang['nama'];
 
         if (!$getVoucher) {
             $result = [
@@ -198,7 +198,7 @@ class VoucherTukang extends CI_Controller
                                             {
                                                 "key": "1",
                                                 "value": "nama",
-                                                "value_text": "' . $nama_contact . '"
+                                                "value_text": "' . $nama_tukang . '"
                                             },
                                             {
                                                 "key": "2",
