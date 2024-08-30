@@ -75,11 +75,12 @@ class VoucherTukang extends CI_Controller
                     $swift_code = $getRekeningToko['swift_bank'];
 
                     if ($is_bca == 1) {
+                        $to_name = str_replace(" ", "%20", $to_name);
                         // TF intrabank
                         $curl = curl_init();
 
                         curl_setopt_array($curl, array(
-                            CURLOPT_URL => 'https://apibca.topmortarindonesia.com/snapIntrabankVctukang.php?to=' . $to_account,
+                            CURLOPT_URL => 'https://apibca.topmortarindonesia.com/snapIntrabankVctukang.php?to=' . $to_account . '&to_name=' . $to_name,
                             CURLOPT_RETURNTRANSFER => true,
                             CURLOPT_ENCODING => '',
                             CURLOPT_MAXREDIRS => 10,
@@ -110,7 +111,7 @@ class VoucherTukang extends CI_Controller
                             $wa_token = $getQontak['token'];
                             $template_id = '781b4601-fba6-4c69-81ad-164a680ecce7';
 
-                            $message = "Dana telah ditransfer ke rekening anda. Silahkan cek mutasi anda.";
+                            $message = "Transaksi claim voucher atas nama " . $nama_tukang . " Berhasil. Dana telah ditransfer ke rekening anda. Silahkan cek mutasi anda.";
 
                             $curl = curl_init();
 
@@ -177,11 +178,11 @@ class VoucherTukang extends CI_Controller
                             $status = $res['status'];
 
                             if ($status == 'success') {
-                                // Send Message
+                                // Send Message Tukang
                                 $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
                                 $integration_id = $getQontak['integration_id'];
                                 $wa_token = $getQontak['token'];
-                                $template_id = '781b4601-fba6-4c69-81ad-164a680ecce7';
+                                $template_id = '9ac4e6a5-0a71-4d00-981b-6cf05e5637da';
 
                                 $message = "Selamat anda telah mendapat potongan diskon 10.000. Program ini disponsori oleh Top Mortar Indonesia";
 
