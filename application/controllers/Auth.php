@@ -69,7 +69,7 @@ class Auth extends CI_Controller
             // Send Message
             $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
             $integration_id = $getQontak['integration_id'];
-            $wa_token = '_GEJodr1x8u7-nSn4tZK2hNq0M5CARkRp_plNdL2tFw';
+            $wa_token = $getQontak['token'];
             $template_id = '9ac4e6a5-0a71-4d00-981b-6cf05e5637da';
 
             $message = "Gunakan kode OTP *" . $getOtp['otp'] . "* untuk melanjutkan proses pendaftaran akun. Kode ini berlaku selama 5 menit. Jangan bagikan kode ini kepada siapapun.";
