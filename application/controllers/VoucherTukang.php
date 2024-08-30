@@ -26,7 +26,18 @@ class VoucherTukang extends CI_Controller
         $id_contact = $post['id_contact'];
         $id_md5 = $post['id_md5'];
 
+        $this->db->join('tb_city', 'tb_city.id_city = tb_contact.id_city');
+        $getContact = $this->db->get_where('tb_contact', ['id_contact' => $id_contact])->row_array();
+        $nomorhp_contact = $getContact['nomorhp'];
+        $nama_contact = $getContact['nama'];
+        $id_distributor = $getContact['id_distributor'];
+
         $getVoucher = $this->MVoucherTukang->getByIdMd5($id_md5);
+        $id_tukang = $getVoucher['id_tukang'];
+
+        $getTukang = $this->db->get_where('tb_tukang', ['id_tukang' => $id_tukang])->row_array();
+        $nomorhp_tukang = $getTukang['nomorhp'];
+        $nama_tukang = $getTukang['nomorhp'];
 
         if (!$getVoucher) {
             $result = [
@@ -126,13 +137,135 @@ class VoucherTukang extends CI_Controller
                         $res = json_decode($response, true);
 
                         if ($res['status'] != 'ok') {
-                            $result = [
-                                'code' => 400,
-                                'status' => 'failed',
-                                'msg' => 'Proses claim gagal'
-                            ];
+                            // Send Message
+                            $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
+                            $integration_id = $getQontak['integration_id'];
+                            $wa_token = $getQontak['token'];
+                            $template_id = '9ac4e6a5-0a71-4d00-981b-6cf05e5637da';
 
-                            $this->output->set_output(json_encode($result));
+                            $message = "Dana telah ditransfer ke rekening anda. Silahkan cek mutasi anda.";
+
+                            $curl = curl_init();
+
+                            curl_setopt_array(
+                                $curl,
+                                array(
+                                    CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
+                                    CURLOPT_RETURNTRANSFER => true,
+                                    CURLOPT_ENCODING => '',
+                                    CURLOPT_MAXREDIRS => 10,
+                                    CURLOPT_TIMEOUT => 0,
+                                    CURLOPT_FOLLOWLOCATION => true,
+                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                    CURLOPT_CUSTOMREQUEST => 'POST',
+                                    CURLOPT_POSTFIELDS => '{
+                                        "to_number": "' . $nomorhp_contact . '",
+                                        "to_name": "' . $nama_contact . '",
+                                        "message_template_id": "' . $template_id . '",
+                                        "channel_integration_id": "' . $integration_id . '",
+                                        "language": {
+                                            "code": "id"
+                                        },
+                                        "parameters": {
+                                            "body": [
+                                            {
+                                                "key": "1",
+                                                "value": "nama",
+                                                "value_text": "' . $nama_contact . '"
+                                            },
+                                            {
+                                                "key": "2",
+                                                "value": "message",
+                                                "value_text": "' . $message . '"
+                                            }
+                                            ]
+                                        }
+                                    }',
+                                    CURLOPT_HTTPHEADER => array(
+                                        'Authorization: Bearer ' . $wa_token,
+                                        'Content-Type: application/json'
+                                    ),
+                                )
+                            );
+
+                            $response = curl_exec($curl);
+
+                            curl_close($curl);
+
+                            $res = json_decode($response, true);
+
+                            $status = $res['status'];
+
+                            if ($status == 'success') {
+                                // Send Message
+                                $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
+                                $integration_id = $getQontak['integration_id'];
+                                $wa_token = $getQontak['token'];
+                                $template_id = '9ac4e6a5-0a71-4d00-981b-6cf05e5637da';
+
+                                $message = "Selamat anda telah mendapat potongan diskon 10.000. Program ini disponsori oleh Top Mortar Indonesia";
+
+                                $curl = curl_init();
+
+                                curl_setopt_array(
+                                    $curl,
+                                    array(
+                                        CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
+                                        CURLOPT_RETURNTRANSFER => true,
+                                        CURLOPT_ENCODING => '',
+                                        CURLOPT_MAXREDIRS => 10,
+                                        CURLOPT_TIMEOUT => 0,
+                                        CURLOPT_FOLLOWLOCATION => true,
+                                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                        CURLOPT_CUSTOMREQUEST => 'POST',
+                                        CURLOPT_POSTFIELDS => '{
+                                        "to_number": "' . $nomorhp_tukang . '",
+                                        "to_name": "' . $nama_tukang . '",
+                                        "message_template_id": "' . $template_id . '",
+                                        "channel_integration_id": "' . $integration_id . '",
+                                        "language": {
+                                            "code": "id"
+                                        },
+                                        "parameters": {
+                                            "body": [
+                                            {
+                                                "key": "1",
+                                                "value": "nama",
+                                                "value_text": "' . $nama_contact . '"
+                                            },
+                                            {
+                                                "key": "2",
+                                                "value": "message",
+                                                "value_text": "' . $message . '"
+                                            }
+                                            ]
+                                        }
+                                    }',
+                                        CURLOPT_HTTPHEADER => array(
+                                            'Authorization: Bearer ' . $wa_token,
+                                            'Content-Type: application/json'
+                                        ),
+                                    )
+                                );
+
+                                $response = curl_exec($curl);
+
+                                curl_close($curl);
+
+                                $res = json_decode($response, true);
+
+                                $status = $res['status'];
+
+                                if ($status == 'success') {
+                                    $result = [
+                                        'code' => 400,
+                                        'status' => 'failed',
+                                        'msg' => 'Proses claim gagal'
+                                    ];
+
+                                    $this->output->set_output(json_encode($result));
+                                }
+                            }
                         } else {
                             $this->MVoucherTukang->claim($id_md5, $id_contact);
 
