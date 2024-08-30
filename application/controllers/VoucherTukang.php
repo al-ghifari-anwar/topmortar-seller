@@ -137,6 +137,14 @@ class VoucherTukang extends CI_Controller
                         $res = json_decode($response, true);
 
                         if ($res['status'] != 'ok') {
+                            $result = [
+                                'code' => 400,
+                                'status' => 'failed',
+                                'msg' => 'Proses claim gagal'
+                            ];
+
+                            $this->output->set_output(json_encode($result));
+                        } else {
                             // Send Message
                             $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
                             $integration_id = $getQontak['integration_id'];
@@ -257,23 +265,15 @@ class VoucherTukang extends CI_Controller
                                 $status = $res['status'];
 
                                 if ($status == 'success') {
-                                    $result = [
-                                        'code' => 400,
-                                        'status' => 'failed',
-                                        'msg' => 'Proses claim gagal'
-                                    ];
+                                    $this->MVoucherTukang->claim($id_md5, $id_contact);
 
-                                    $this->output->set_output(json_encode($result));
+                                    $result = [
+                                        'code' => 200,
+                                        'status' => 'failed',
+                                        'msg' => 'Claim voucher berhasil, dana telah masuk ke rekening / e-wallet anda'
+                                    ];
                                 }
                             }
-                        } else {
-                            $this->MVoucherTukang->claim($id_md5, $id_contact);
-
-                            $result = [
-                                'code' => 200,
-                                'status' => 'failed',
-                                'msg' => 'Claim voucher berhasil, dana telah masuk ke rekening / e-wallet anda'
-                            ];
 
                             $this->output->set_output(json_encode($result));
                         }
