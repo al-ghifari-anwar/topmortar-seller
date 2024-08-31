@@ -177,7 +177,7 @@ class VoucherTukang extends CI_Controller
                                 $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
                                 $integration_id = $getQontak['integration_id'];
                                 $wa_token = $getQontak['token'];
-                                $template_id = '9ac4e6a5-0a71-4d00-981b-6cf05e5637da';
+                                $template_id = '781b4601-fba6-4c69-81ad-164a680ecce7';
 
                                 $message = "Selamat anda telah mendapat potongan diskon 10.000. Program ini disponsori oleh Top Mortar Indonesia";
 
@@ -203,15 +203,23 @@ class VoucherTukang extends CI_Controller
                                             "code": "id"
                                         },
                                         "parameters": {
+                                            "header":{
+                                                "format":"IMAGE",
+                                                "params": [
+                                                    {
+                                                        "key":"url",
+                                                        "value":"https://seller.topmortarindonesia.com/assets/img/notif_tukang.png"
+                                                    },
+                                                    {
+                                                        "key":"filename",
+                                                        "value":"qrtukang.png"
+                                                    }
+                                                ]
+                                            },
                                             "body": [
                                             {
                                                 "key": "1",
                                                 "value": "nama",
-                                                "value_text": "' . $nama_tukang . '"
-                                            },
-                                            {
-                                                "key": "2",
-                                                "value": "message",
                                                 "value_text": "' . $message . '"
                                             }
                                             ]
