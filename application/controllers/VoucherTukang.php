@@ -252,7 +252,7 @@ class VoucherTukang extends CI_Controller
                                 $result = [
                                     'code' => 400,
                                     'status' => 'failed',
-                                    'msg' => 'Claim voucher berhasil, dana telah masuk ke rekening / e-wallet anda',
+                                    'msg' => 'Failed',
                                     'detail' => $res
                                 ];
 
