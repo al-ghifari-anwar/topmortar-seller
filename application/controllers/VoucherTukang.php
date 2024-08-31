@@ -140,7 +140,7 @@ class VoucherTukang extends CI_Controller
                                                 "params": [
                                                     {
                                                         "key":"url",
-                                                        "value":"https://seller.topmortarindonesia.com/assets/img/' . 'notif_toko' . '.png"
+                                                        "value":"https://seller.topmortarindonesia.com/assets/img/notif_toko.png"
                                                     },
                                                     {
                                                         "key":"filename",
@@ -152,11 +152,6 @@ class VoucherTukang extends CI_Controller
                                             {
                                                 "key": "1",
                                                 "value": "nama",
-                                                "value_text": "' . $nama_contact . '"
-                                            },
-                                            {
-                                                "key": "2",
-                                                "value": "message",
                                                 "value_text": "' . $message . '"
                                             }
                                             ]
