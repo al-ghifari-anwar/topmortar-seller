@@ -68,7 +68,7 @@ class VoucherTukang extends CI_Controller
                 } else {
                     // Success
                     $getRekeningToko = $this->MRekeningToko->getByIdContact($id_contact);
-                    $to_name = $getRekeningToko['to_name'];
+                    $to_name = $nama_tukang;
                     $to_account = $getRekeningToko['to_account'];
                     $is_bca = $getRekeningToko['is_bca'];
                     $nama_bank = $getRekeningToko['nama_bank'];
