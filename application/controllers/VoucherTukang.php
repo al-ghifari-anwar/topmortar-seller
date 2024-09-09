@@ -21,24 +21,35 @@ class VoucherTukang extends CI_Controller
 
     public function getByIdContact($id_contact)
     {
-        $this->output->set_content_type('application/json');
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
-        $getVoucherTukang = $this->MVoucherTukang->getByIdContact($id_contact);
+            $this->output->set_content_type('application/json');
 
-        if ($getVoucherTukang == null) {
+            $getVoucherTukang = $this->MVoucherTukang->getByIdContact($id_contact);
+
+            if ($getVoucherTukang == null) {
+                $result = [
+                    'code' => 400,
+                    'status' => 'failed',
+                    'msg' => 'Tidak ada data'
+                ];
+
+                $this->output->set_output(json_encode($result));
+            } else {
+                $result = [
+                    'code' => 200,
+                    'status' => 'ok',
+                    'msg' => 'Sukses mengambil data penukaran',
+                    'data' => $getVoucherTukang
+                ];
+
+                $this->output->set_output(json_encode($result));
+            }
+        } else {
             $result = [
                 'code' => 400,
                 'status' => 'failed',
-                'msg' => 'Tidak ada data'
-            ];
-
-            $this->output->set_output(json_encode($result));
-        } else {
-            $result = [
-                'code' => 200,
-                'status' => 'ok',
-                'msg' => 'Sukses mengambil data penukaran',
-                'data' => $getVoucherTukang
+                'msg' => 'Not Found'
             ];
 
             $this->output->set_output(json_encode($result));
