@@ -31,14 +31,25 @@ class Auth extends CI_Controller
 
             $this->output->set_output(json_encode($result));
         } else {
-            $result = [
-                'code' => 200,
-                'status' => 'ok',
-                'msg' => 'Nomor sesuai',
-                'data' => $getContact
-            ];
+            if ($getContact['store_status'] == 'blacklist') {
+                $result = [
+                    'code' => 400,
+                    'status' => 'ok',
+                    'msg' => 'Toko tidak memenuhi syarat',
+                    'data' => $getContact
+                ];
 
-            $this->output->set_output(json_encode($result));
+                $this->output->set_output(json_encode($result));
+            } else {
+                $result = [
+                    'code' => 200,
+                    'status' => 'ok',
+                    'msg' => 'Nomor sesuai',
+                    'data' => $getContact
+                ];
+
+                $this->output->set_output(json_encode($result));
+            }
         }
     }
 

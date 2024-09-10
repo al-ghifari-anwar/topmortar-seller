@@ -21,24 +21,35 @@ class VoucherTukang extends CI_Controller
 
     public function getByIdContact($id_contact)
     {
-        $this->output->set_content_type('application/json');
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
-        $getVoucherTukang = $this->MVoucherTukang->getByIdContact($id_contact);
+            $this->output->set_content_type('application/json');
 
-        if ($getVoucherTukang == null) {
+            $getVoucherTukang = $this->MVoucherTukang->getByIdContact($id_contact);
+
+            if ($getVoucherTukang == null) {
+                $result = [
+                    'code' => 400,
+                    'status' => 'failed',
+                    'msg' => 'Tidak ada data'
+                ];
+
+                $this->output->set_output(json_encode($result));
+            } else {
+                $result = [
+                    'code' => 200,
+                    'status' => 'ok',
+                    'msg' => 'Sukses mengambil data penukaran',
+                    'data' => $getVoucherTukang
+                ];
+
+                $this->output->set_output(json_encode($result));
+            }
+        } else {
             $result = [
                 'code' => 400,
                 'status' => 'failed',
-                'msg' => 'Tidak ada data'
-            ];
-
-            $this->output->set_output(json_encode($result));
-        } else {
-            $result = [
-                'code' => 200,
-                'status' => 'ok',
-                'msg' => 'Sukses mengambil data penukaran',
-                'data' => $getVoucherTukang
+                'msg' => 'Not Found'
             ];
 
             $this->output->set_output(json_encode($result));
@@ -319,6 +330,7 @@ class VoucherTukang extends CI_Controller
 
                             $this->output->set_output(json_encode($result));
                         } else {
+                            $this->MVoucherTukang->claim($id_md5, $id_contact);
                             // Send Message
                             $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
                             $integration_id = $getQontak['integration_id'];
@@ -387,6 +399,10 @@ class VoucherTukang extends CI_Controller
 
                                 $message = "Selamat anda telah mendapat potongan diskon 10.000. Program ini disponsori oleh Top Mortar Indonesia";
 
+                                if ($getVoucher['type_voucher'] == 'tokopromo') {
+                                    $message = "Selamat anda telah mendapat potongan diskon 5.000. Program ini disponsori oleh Top Mortar Indonesia";
+                                }
+
                                 $curl = curl_init();
 
                                 curl_setopt_array(
@@ -439,7 +455,6 @@ class VoucherTukang extends CI_Controller
                                 $status = $res['status'];
 
                                 if ($status == 'success') {
-                                    $this->MVoucherTukang->claim($id_md5, $id_contact);
 
                                     $result = [
                                         'code' => 200,
