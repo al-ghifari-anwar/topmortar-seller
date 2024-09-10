@@ -397,7 +397,11 @@ class VoucherTukang extends CI_Controller
                                 $wa_token = $getQontak['token'];
                                 $template_id = '9ac4e6a5-0a71-4d00-981b-6cf05e5637da';
 
-                                $message = "Selamat anda telah mendapat potongan diskon 5.000. Program ini disponsori oleh Top Mortar Indonesia";
+                                $message = "Selamat anda telah mendapat potongan diskon 10.000. Program ini disponsori oleh Top Mortar Indonesia";
+
+                                if ($getVoucher['type_voucher'] == 'tokopromo') {
+                                    $message = "Selamat anda telah mendapat potongan diskon 5.000. Program ini disponsori oleh Top Mortar Indonesia";
+                                }
 
                                 $curl = curl_init();
 
