@@ -325,7 +325,8 @@ class VoucherTukang extends CI_Controller
                             $result = [
                                 'code' => 400,
                                 'status' => 'failed',
-                                'msg' => 'Proses claim gagal'
+                                'msg' => 'Proses claim gagal',
+                                'detail' => $res['detail']
                             ];
 
                             $this->output->set_output(json_encode($result));
