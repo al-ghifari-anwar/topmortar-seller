@@ -69,6 +69,16 @@ class VoucherTukang extends CI_Controller
         $nama_contact = $getContact['nama'];
         $id_distributor = $getContact['id_distributor'];
 
+        if ($getContact['store_status'] == 'blacklist') {
+            $result = [
+                'code' => 400,
+                'status' => 'failed',
+                'msg' => 'Toko anda tidak memenuhi syarat, hubungi Top Mortar Official di 087826210888 untuk informasi lebih lanjut'
+            ];
+
+            $this->output->set_output(json_encode($result));
+        }
+
         $getVoucher = $this->MVoucherTukang->getByIdMd5($id_md5);
         $id_tukang = $getVoucher['id_tukang'];
 
@@ -219,9 +229,11 @@ class VoucherTukang extends CI_Controller
                                 $template_id = '7bf2d2a0-bdd5-4c70-ba9f-a9665f66a841';
 
                                 $message = "Selamat anda telah mendapat potongan diskon 10.000. Program ini disponsori oleh Top Mortar Indonesia";
+                                $img_tukang = "https://seller.topmortarindonesia.com/assets/img/notif_tukang.png";
 
                                 if ($getVoucher['type_voucher'] == 'tokopromo') {
                                     $message = "Selamat anda telah mendapat potongan diskon 5.000. Program ini disponsori oleh Top Mortar Indonesia";
+                                    $img_tukang = "https://seller.topmortarindonesia.com/assets/img/notif_tukang_tokopromo.png";
                                 }
 
                                 $curl = curl_init();
@@ -251,7 +263,7 @@ class VoucherTukang extends CI_Controller
                                                 "params": [
                                                     {
                                                         "key":"url",
-                                                        "value":"https://seller.topmortarindonesia.com/assets/img/notif_tukang.png"
+                                                        "value":"' . $img_tukang . '"
                                                     },
                                                     {
                                                         "key":"filename",

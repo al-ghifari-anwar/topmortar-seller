@@ -252,23 +252,33 @@ class Auth extends CI_Controller
 
             $this->output->set_output(json_encode($result));
         } else {
-            if ($getContact['pass_contact'] != $pass_contact) {
+            if ($getContact['store_status'] == 'blacklist') {
                 $result = [
                     'code' => 400,
                     'status' => 'failed',
-                    'msg' => 'Password salah, silahkan daftar terlebih dahulu atau coba lagi'
+                    'msg' => 'Toko anda tidak memenuhi syarat, hubungi Top Mortar Official di 087826210888 untuk informasi lebih lanjut'
                 ];
 
                 $this->output->set_output(json_encode($result));
-            } else if ($getContact['pass_contact'] == $pass_contact) {
-                $result = [
-                    'code' => 200,
-                    'status' => 'ok',
-                    'msg' => 'Berhasil login, terimakasih ^_^',
-                    'data' => $getContact
-                ];
+            } else {
+                if ($getContact['pass_contact'] != $pass_contact) {
+                    $result = [
+                        'code' => 400,
+                        'status' => 'failed',
+                        'msg' => 'Password salah, silahkan daftar terlebih dahulu atau coba lagi'
+                    ];
 
-                $this->output->set_output(json_encode($result));
+                    $this->output->set_output(json_encode($result));
+                } else if ($getContact['pass_contact'] == $pass_contact) {
+                    $result = [
+                        'code' => 200,
+                        'status' => 'ok',
+                        'msg' => 'Berhasil login, terimakasih ^_^',
+                        'data' => $getContact
+                    ];
+
+                    $this->output->set_output(json_encode($result));
+                }
             }
         }
     }
