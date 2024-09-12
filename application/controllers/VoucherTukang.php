@@ -216,7 +216,7 @@ class VoucherTukang extends CI_Controller
                                 $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
                                 $integration_id = $getQontak['integration_id'];
                                 $wa_token = $getQontak['token'];
-                                $template_id = '781b4601-fba6-4c69-81ad-164a680ecce7';
+                                $template_id = '7fdfc9a8-3724-42b0-bb6a-8654d188f76b';
 
                                 $message = "Selamat anda telah mendapat potongan diskon 10.000. Program ini disponsori oleh Top Mortar Indonesia";
 
