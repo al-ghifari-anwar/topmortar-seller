@@ -77,105 +77,104 @@ class VoucherTukang extends CI_Controller
             ];
 
             $this->output->set_output(json_encode($result));
-        }
-
-        $getVoucher = $this->MVoucherTukang->getByIdMd5($id_md5);
-        $id_tukang = $getVoucher['id_tukang'];
-
-        $getTukang = $this->db->get_where('tb_tukang', ['id_tukang' => $id_tukang])->row_array();
-        $nomorhp_tukang = $getTukang['nomorhp'];
-        $nama_tukang = $getTukang['nama'];
-
-        if (!$getVoucher) {
-            $result = [
-                'code' => 400,
-                'status' => 'failed',
-                'msg' => 'Voucher tidak ditemukan'
-            ];
-
-            $this->output->set_output(json_encode($result));
         } else {
-            if ($getVoucher['is_claimed'] == 1) {
+            $getVoucher = $this->MVoucherTukang->getByIdMd5($id_md5);
+            $id_tukang = $getVoucher['id_tukang'];
+
+            $getTukang = $this->db->get_where('tb_tukang', ['id_tukang' => $id_tukang])->row_array();
+            $nomorhp_tukang = $getTukang['nomorhp'];
+            $nama_tukang = $getTukang['nama'];
+
+            if (!$getVoucher) {
                 $result = [
                     'code' => 400,
                     'status' => 'failed',
-                    'msg' => 'QR voucher sudah pernah diclaim'
+                    'msg' => 'Voucher tidak ditemukan'
                 ];
 
                 $this->output->set_output(json_encode($result));
             } else {
-                if ($getVoucher['exp_at'] < date("Y-m-d")) {
+                if ($getVoucher['is_claimed'] == 1) {
                     $result = [
                         'code' => 400,
                         'status' => 'failed',
-                        'msg' => 'QR voucher sudah expired'
+                        'msg' => 'QR voucher sudah pernah diclaim'
                     ];
 
                     $this->output->set_output(json_encode($result));
                 } else {
-                    // Success
-                    $getRekeningToko = $this->MRekeningToko->getByIdContact($id_contact);
-                    $to_name = $nama_tukang;
-                    $to_account = $getRekeningToko['to_account'];
-                    $is_bca = $getRekeningToko['is_bca'];
-                    $nama_bank = $getRekeningToko['nama_bank'];
-                    $swift_code = $getRekeningToko['swift_bank'];
+                    if ($getVoucher['exp_at'] < date("Y-m-d")) {
+                        $result = [
+                            'code' => 400,
+                            'status' => 'failed',
+                            'msg' => 'QR voucher sudah expired'
+                        ];
 
-                    if ($is_bca == 1) {
-                        $to_name = str_replace(" ", "%20", $to_name);
-                        // TF intrabank
-                        $curl = curl_init();
+                        $this->output->set_output(json_encode($result));
+                    } else {
+                        // Success
+                        $getRekeningToko = $this->MRekeningToko->getByIdContact($id_contact);
+                        $to_name = $nama_tukang;
+                        $to_account = $getRekeningToko['to_account'];
+                        $is_bca = $getRekeningToko['is_bca'];
+                        $nama_bank = $getRekeningToko['nama_bank'];
+                        $swift_code = $getRekeningToko['swift_bank'];
 
-                        curl_setopt_array($curl, array(
-                            CURLOPT_URL => 'https://apibca.topmortarindonesia.com/snapIntrabankVctukang.php?to=' . $to_account . '&to_name=' . $to_name,
-                            CURLOPT_RETURNTRANSFER => true,
-                            CURLOPT_ENCODING => '',
-                            CURLOPT_MAXREDIRS => 10,
-                            CURLOPT_TIMEOUT => 0,
-                            CURLOPT_FOLLOWLOCATION => true,
-                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                            CURLOPT_CUSTOMREQUEST => 'GET',
-                        ));
-
-                        $response = curl_exec($curl);
-
-                        curl_close($curl);
-
-                        $res = json_decode($response, true);
-
-                        if ($res['status'] != 'ok') {
-                            $result = [
-                                'code' => 400,
-                                'status' => 'failed',
-                                'msg' => 'Proses claim gagal',
-                                'detail' => $res['detail']
-                            ];
-
-                            $this->output->set_output(json_encode($result));
-                        } else {
-                            // Send Message
-                            $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
-                            $integration_id = $getQontak['integration_id'];
-                            $wa_token = $getQontak['token'];
-                            // $template_id = '781b4601-fba6-4c69-81ad-164a680ecce7';
-                            $template_id = '7bf2d2a0-bdd5-4c70-ba9f-a9665f66a841';
-
-                            $message = "Transaksi claim voucher atas nama " . $nama_tukang . " Berhasil. Dana telah ditransfer ke rekening anda. Silahkan cek mutasi anda.";
-
+                        if ($is_bca == 1) {
+                            $to_name = str_replace(" ", "%20", $to_name);
+                            // TF intrabank
                             $curl = curl_init();
 
-                            curl_setopt_array(
-                                $curl,
-                                array(
-                                    CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
-                                    CURLOPT_RETURNTRANSFER => true,
-                                    CURLOPT_ENCODING => '',
-                                    CURLOPT_MAXREDIRS => 10,
-                                    CURLOPT_TIMEOUT => 0,
-                                    CURLOPT_FOLLOWLOCATION => true,
-                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                    CURLOPT_CUSTOMREQUEST => 'POST',
-                                    CURLOPT_POSTFIELDS => '{
+                            curl_setopt_array($curl, array(
+                                CURLOPT_URL => 'https://apibca.topmortarindonesia.com/snapIntrabankVctukang.php?to=' . $to_account . '&to_name=' . $to_name,
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_ENCODING => '',
+                                CURLOPT_MAXREDIRS => 10,
+                                CURLOPT_TIMEOUT => 0,
+                                CURLOPT_FOLLOWLOCATION => true,
+                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                CURLOPT_CUSTOMREQUEST => 'GET',
+                            ));
+
+                            $response = curl_exec($curl);
+
+                            curl_close($curl);
+
+                            $res = json_decode($response, true);
+
+                            if ($res['status'] != 'ok') {
+                                $result = [
+                                    'code' => 400,
+                                    'status' => 'failed',
+                                    'msg' => 'Proses claim gagal',
+                                    'detail' => $res['detail']
+                                ];
+
+                                $this->output->set_output(json_encode($result));
+                            } else {
+                                // Send Message
+                                $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
+                                $integration_id = $getQontak['integration_id'];
+                                $wa_token = $getQontak['token'];
+                                // $template_id = '781b4601-fba6-4c69-81ad-164a680ecce7';
+                                $template_id = '7bf2d2a0-bdd5-4c70-ba9f-a9665f66a841';
+
+                                $message = "Transaksi claim voucher atas nama " . $nama_tukang . " Berhasil. Dana telah ditransfer ke rekening anda. Silahkan cek mutasi anda.";
+
+                                $curl = curl_init();
+
+                                curl_setopt_array(
+                                    $curl,
+                                    array(
+                                        CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
+                                        CURLOPT_RETURNTRANSFER => true,
+                                        CURLOPT_ENCODING => '',
+                                        CURLOPT_MAXREDIRS => 10,
+                                        CURLOPT_TIMEOUT => 0,
+                                        CURLOPT_FOLLOWLOCATION => true,
+                                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                        CURLOPT_CUSTOMREQUEST => 'POST',
+                                        CURLOPT_POSTFIELDS => '{
                                         "to_number": "' . $nomorhp_contact . '",
                                         "to_name": "' . $nama_contact . '",
                                         "message_template_id": "' . $template_id . '",
@@ -206,50 +205,50 @@ class VoucherTukang extends CI_Controller
                                             ]
                                         }
                                     }',
-                                    CURLOPT_HTTPHEADER => array(
-                                        'Authorization: Bearer ' . $wa_token,
-                                        'Content-Type: application/json'
-                                    ),
-                                )
-                            );
+                                        CURLOPT_HTTPHEADER => array(
+                                            'Authorization: Bearer ' . $wa_token,
+                                            'Content-Type: application/json'
+                                        ),
+                                    )
+                                );
 
-                            $response = curl_exec($curl);
+                                $response = curl_exec($curl);
 
-                            curl_close($curl);
+                                curl_close($curl);
 
-                            $res = json_decode($response, true);
+                                $res = json_decode($response, true);
 
-                            $status = $res['status'];
+                                $status = $res['status'];
 
-                            if ($status == 'success') {
-                                // Send Message Tukang
-                                $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
-                                $integration_id = $getQontak['integration_id'];
-                                $wa_token = $getQontak['token'];
-                                $template_id = '7bf2d2a0-bdd5-4c70-ba9f-a9665f66a841';
+                                if ($status == 'success') {
+                                    // Send Message Tukang
+                                    $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
+                                    $integration_id = $getQontak['integration_id'];
+                                    $wa_token = $getQontak['token'];
+                                    $template_id = '7bf2d2a0-bdd5-4c70-ba9f-a9665f66a841';
 
-                                $message = "Selamat anda telah mendapat potongan diskon 10.000. Program ini disponsori oleh Top Mortar Indonesia";
-                                $img_tukang = "https://seller.topmortarindonesia.com/assets/img/notif_tukang.png";
+                                    $message = "Selamat anda telah mendapat potongan diskon 10.000. Program ini disponsori oleh Top Mortar Indonesia";
+                                    $img_tukang = "https://seller.topmortarindonesia.com/assets/img/notif_tukang.png";
 
-                                if ($getVoucher['type_voucher'] == 'tokopromo') {
-                                    $message = "Selamat anda telah mendapat potongan diskon 5.000. Program ini disponsori oleh Top Mortar Indonesia";
-                                    $img_tukang = "https://seller.topmortarindonesia.com/assets/img/notif_tukang_tokopromo.png";
-                                }
+                                    if ($getVoucher['type_voucher'] == 'tokopromo') {
+                                        $message = "Selamat anda telah mendapat potongan diskon 5.000. Program ini disponsori oleh Top Mortar Indonesia";
+                                        $img_tukang = "https://seller.topmortarindonesia.com/assets/img/notif_tukang_tokopromo.png";
+                                    }
 
-                                $curl = curl_init();
+                                    $curl = curl_init();
 
-                                curl_setopt_array(
-                                    $curl,
-                                    array(
-                                        CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
-                                        CURLOPT_RETURNTRANSFER => true,
-                                        CURLOPT_ENCODING => '',
-                                        CURLOPT_MAXREDIRS => 10,
-                                        CURLOPT_TIMEOUT => 0,
-                                        CURLOPT_FOLLOWLOCATION => true,
-                                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                        CURLOPT_CUSTOMREQUEST => 'POST',
-                                        CURLOPT_POSTFIELDS => '{
+                                    curl_setopt_array(
+                                        $curl,
+                                        array(
+                                            CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
+                                            CURLOPT_RETURNTRANSFER => true,
+                                            CURLOPT_ENCODING => '',
+                                            CURLOPT_MAXREDIRS => 10,
+                                            CURLOPT_TIMEOUT => 0,
+                                            CURLOPT_FOLLOWLOCATION => true,
+                                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                            CURLOPT_CUSTOMREQUEST => 'POST',
+                                            CURLOPT_POSTFIELDS => '{
                                         "to_number": "' . $nomorhp_tukang . '",
                                         "to_name": "' . $nama_tukang . '",
                                         "message_template_id": "' . $template_id . '",
@@ -280,98 +279,98 @@ class VoucherTukang extends CI_Controller
                                             ]
                                         }
                                     }',
-                                        CURLOPT_HTTPHEADER => array(
-                                            'Authorization: Bearer ' . $wa_token,
-                                            'Content-Type: application/json'
-                                        ),
-                                    )
-                                );
+                                            CURLOPT_HTTPHEADER => array(
+                                                'Authorization: Bearer ' . $wa_token,
+                                                'Content-Type: application/json'
+                                            ),
+                                        )
+                                    );
 
-                                $response = curl_exec($curl);
+                                    $response = curl_exec($curl);
 
-                                curl_close($curl);
+                                    curl_close($curl);
 
-                                $res = json_decode($response, true);
+                                    $res = json_decode($response, true);
 
-                                $status = $res['status'];
+                                    $status = $res['status'];
 
-                                if ($status == 'success') {
-                                    $this->MVoucherTukang->claim($id_md5, $id_contact);
+                                    if ($status == 'success') {
+                                        $this->MVoucherTukang->claim($id_md5, $id_contact);
 
+                                        $result = [
+                                            'code' => 200,
+                                            'status' => 'ok',
+                                            'msg' => 'Claim voucher berhasil, dana telah masuk ke rekening / e-wallet anda'
+                                        ];
+
+                                        $this->output->set_output(json_encode($result));
+                                    }
+                                } else {
                                     $result = [
-                                        'code' => 200,
-                                        'status' => 'ok',
-                                        'msg' => 'Claim voucher berhasil, dana telah masuk ke rekening / e-wallet anda'
+                                        'code' => 400,
+                                        'status' => 'failed',
+                                        'msg' => 'Failed',
+                                        'detail' => $res
                                     ];
 
                                     $this->output->set_output(json_encode($result));
                                 }
-                            } else {
-                                $result = [
-                                    'code' => 400,
-                                    'status' => 'failed',
-                                    'msg' => 'Failed',
-                                    'detail' => $res
-                                ];
-
-                                $this->output->set_output(json_encode($result));
                             }
-                        }
-                    } else {
-                        $to_name = str_replace(" ", "%20", $to_name);
-
-                        $curl = curl_init();
-
-                        curl_setopt_array($curl, array(
-                            CURLOPT_URL => "https://apibca.topmortarindonesia.com/snapInterbankVctukang.php?to=$to_account&to_name=$to_name&bank_code=$swift_code",
-                            CURLOPT_RETURNTRANSFER => true,
-                            CURLOPT_ENCODING => '',
-                            CURLOPT_MAXREDIRS => 10,
-                            CURLOPT_TIMEOUT => 0,
-                            CURLOPT_FOLLOWLOCATION => true,
-                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                            CURLOPT_CUSTOMREQUEST => 'GET',
-                        ));
-
-                        $response = curl_exec($curl);
-
-                        curl_close($curl);
-
-                        $res = json_decode($response, true);
-
-                        if ($res['status'] != 'ok') {
-                            $result = [
-                                'code' => 400,
-                                'status' => 'failed',
-                                'msg' => 'Proses claim gagal',
-                                'detail' => $res['detail']
-                            ];
-
-                            $this->output->set_output(json_encode($result));
                         } else {
-                            $this->MVoucherTukang->claim($id_md5, $id_contact);
-                            // Send Message
-                            $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
-                            $integration_id = $getQontak['integration_id'];
-                            $wa_token = $getQontak['token'];
-                            $template_id = '9ac4e6a5-0a71-4d00-981b-6cf05e5637da';
-
-                            $message = "Dana telah ditransfer ke rekening anda. Silahkan cek mutasi anda.";
+                            $to_name = str_replace(" ", "%20", $to_name);
 
                             $curl = curl_init();
 
-                            curl_setopt_array(
-                                $curl,
-                                array(
-                                    CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
-                                    CURLOPT_RETURNTRANSFER => true,
-                                    CURLOPT_ENCODING => '',
-                                    CURLOPT_MAXREDIRS => 10,
-                                    CURLOPT_TIMEOUT => 0,
-                                    CURLOPT_FOLLOWLOCATION => true,
-                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                    CURLOPT_CUSTOMREQUEST => 'POST',
-                                    CURLOPT_POSTFIELDS => '{
+                            curl_setopt_array($curl, array(
+                                CURLOPT_URL => "https://apibca.topmortarindonesia.com/snapInterbankVctukang.php?to=$to_account&to_name=$to_name&bank_code=$swift_code",
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_ENCODING => '',
+                                CURLOPT_MAXREDIRS => 10,
+                                CURLOPT_TIMEOUT => 0,
+                                CURLOPT_FOLLOWLOCATION => true,
+                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                CURLOPT_CUSTOMREQUEST => 'GET',
+                            ));
+
+                            $response = curl_exec($curl);
+
+                            curl_close($curl);
+
+                            $res = json_decode($response, true);
+
+                            if ($res['status'] != 'ok') {
+                                $result = [
+                                    'code' => 400,
+                                    'status' => 'failed',
+                                    'msg' => 'Proses claim gagal',
+                                    'detail' => $res['detail']
+                                ];
+
+                                $this->output->set_output(json_encode($result));
+                            } else {
+                                $this->MVoucherTukang->claim($id_md5, $id_contact);
+                                // Send Message
+                                $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
+                                $integration_id = $getQontak['integration_id'];
+                                $wa_token = $getQontak['token'];
+                                $template_id = '9ac4e6a5-0a71-4d00-981b-6cf05e5637da';
+
+                                $message = "Dana telah ditransfer ke rekening anda. Silahkan cek mutasi anda.";
+
+                                $curl = curl_init();
+
+                                curl_setopt_array(
+                                    $curl,
+                                    array(
+                                        CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
+                                        CURLOPT_RETURNTRANSFER => true,
+                                        CURLOPT_ENCODING => '',
+                                        CURLOPT_MAXREDIRS => 10,
+                                        CURLOPT_TIMEOUT => 0,
+                                        CURLOPT_FOLLOWLOCATION => true,
+                                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                        CURLOPT_CUSTOMREQUEST => 'POST',
+                                        CURLOPT_POSTFIELDS => '{
                                         "to_number": "' . $nomorhp_contact . '",
                                         "to_name": "' . $nama_contact . '",
                                         "message_template_id": "' . $template_id . '",
@@ -394,48 +393,48 @@ class VoucherTukang extends CI_Controller
                                             ]
                                         }
                                     }',
-                                    CURLOPT_HTTPHEADER => array(
-                                        'Authorization: Bearer ' . $wa_token,
-                                        'Content-Type: application/json'
-                                    ),
-                                )
-                            );
+                                        CURLOPT_HTTPHEADER => array(
+                                            'Authorization: Bearer ' . $wa_token,
+                                            'Content-Type: application/json'
+                                        ),
+                                    )
+                                );
 
-                            $response = curl_exec($curl);
+                                $response = curl_exec($curl);
 
-                            curl_close($curl);
+                                curl_close($curl);
 
-                            $res = json_decode($response, true);
+                                $res = json_decode($response, true);
 
-                            $status = $res['status'];
+                                $status = $res['status'];
 
-                            if ($status == 'success') {
-                                // Send Message
-                                $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
-                                $integration_id = $getQontak['integration_id'];
-                                $wa_token = $getQontak['token'];
-                                $template_id = '9ac4e6a5-0a71-4d00-981b-6cf05e5637da';
+                                if ($status == 'success') {
+                                    // Send Message
+                                    $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
+                                    $integration_id = $getQontak['integration_id'];
+                                    $wa_token = $getQontak['token'];
+                                    $template_id = '9ac4e6a5-0a71-4d00-981b-6cf05e5637da';
 
-                                $message = "Selamat anda telah mendapat potongan diskon 10.000. Program ini disponsori oleh Top Mortar Indonesia";
+                                    $message = "Selamat anda telah mendapat potongan diskon 10.000. Program ini disponsori oleh Top Mortar Indonesia";
 
-                                if ($getVoucher['type_voucher'] == 'tokopromo') {
-                                    $message = "Selamat anda telah mendapat potongan diskon 5.000. Program ini disponsori oleh Top Mortar Indonesia";
-                                }
+                                    if ($getVoucher['type_voucher'] == 'tokopromo') {
+                                        $message = "Selamat anda telah mendapat potongan diskon 5.000. Program ini disponsori oleh Top Mortar Indonesia";
+                                    }
 
-                                $curl = curl_init();
+                                    $curl = curl_init();
 
-                                curl_setopt_array(
-                                    $curl,
-                                    array(
-                                        CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
-                                        CURLOPT_RETURNTRANSFER => true,
-                                        CURLOPT_ENCODING => '',
-                                        CURLOPT_MAXREDIRS => 10,
-                                        CURLOPT_TIMEOUT => 0,
-                                        CURLOPT_FOLLOWLOCATION => true,
-                                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                        CURLOPT_CUSTOMREQUEST => 'POST',
-                                        CURLOPT_POSTFIELDS => '{
+                                    curl_setopt_array(
+                                        $curl,
+                                        array(
+                                            CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
+                                            CURLOPT_RETURNTRANSFER => true,
+                                            CURLOPT_ENCODING => '',
+                                            CURLOPT_MAXREDIRS => 10,
+                                            CURLOPT_TIMEOUT => 0,
+                                            CURLOPT_FOLLOWLOCATION => true,
+                                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                            CURLOPT_CUSTOMREQUEST => 'POST',
+                                            CURLOPT_POSTFIELDS => '{
                                         "to_number": "' . $nomorhp_tukang . '",
                                         "to_name": "' . $nama_tukang . '",
                                         "message_template_id": "' . $template_id . '",
@@ -458,32 +457,33 @@ class VoucherTukang extends CI_Controller
                                             ]
                                         }
                                     }',
-                                        CURLOPT_HTTPHEADER => array(
-                                            'Authorization: Bearer ' . $wa_token,
-                                            'Content-Type: application/json'
-                                        ),
-                                    )
-                                );
+                                            CURLOPT_HTTPHEADER => array(
+                                                'Authorization: Bearer ' . $wa_token,
+                                                'Content-Type: application/json'
+                                            ),
+                                        )
+                                    );
 
-                                $response = curl_exec($curl);
+                                    $response = curl_exec($curl);
 
-                                curl_close($curl);
+                                    curl_close($curl);
 
-                                $res = json_decode($response, true);
+                                    $res = json_decode($response, true);
 
-                                $status = $res['status'];
+                                    $status = $res['status'];
 
-                                if ($status == 'success') {
+                                    if ($status == 'success') {
 
-                                    $result = [
-                                        'code' => 200,
-                                        'status' => 'ok',
-                                        'msg' => 'Claim voucher berhasil, dana telah masuk ke rekening / e-wallet anda'
-                                    ];
+                                        $result = [
+                                            'code' => 200,
+                                            'status' => 'ok',
+                                            'msg' => 'Claim voucher berhasil, dana telah masuk ke rekening / e-wallet anda'
+                                        ];
+                                    }
                                 }
-                            }
 
-                            $this->output->set_output(json_encode($result));
+                                $this->output->set_output(json_encode($result));
+                            }
                         }
                     }
                 }
