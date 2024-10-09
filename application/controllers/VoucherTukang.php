@@ -317,173 +317,173 @@ class VoucherTukang extends CI_Controller
                                 }
                             }
                         } else {
-                            $to_name = str_replace(" ", "%20", $to_name);
+                            // $to_name = str_replace(" ", "%20", $to_name);
 
-                            $curl = curl_init();
+                            // $curl = curl_init();
 
-                            curl_setopt_array($curl, array(
-                                CURLOPT_URL => "https://apibca.topmortarindonesia.com/snapInterbankVctukang.php?to=$to_account&to_name=$to_name&bank_code=$swift_code",
-                                CURLOPT_RETURNTRANSFER => true,
-                                CURLOPT_ENCODING => '',
-                                CURLOPT_MAXREDIRS => 10,
-                                CURLOPT_TIMEOUT => 0,
-                                CURLOPT_FOLLOWLOCATION => true,
-                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                CURLOPT_CUSTOMREQUEST => 'GET',
-                            ));
+                            // curl_setopt_array($curl, array(
+                            //     CURLOPT_URL => "https://apibca.topmortarindonesia.com/snapInterbankVctukang.php?to=$to_account&to_name=$to_name&bank_code=$swift_code",
+                            //     CURLOPT_RETURNTRANSFER => true,
+                            //     CURLOPT_ENCODING => '',
+                            //     CURLOPT_MAXREDIRS => 10,
+                            //     CURLOPT_TIMEOUT => 0,
+                            //     CURLOPT_FOLLOWLOCATION => true,
+                            //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            //     CURLOPT_CUSTOMREQUEST => 'GET',
+                            // ));
 
-                            $response = curl_exec($curl);
+                            // $response = curl_exec($curl);
 
-                            curl_close($curl);
+                            // curl_close($curl);
 
-                            $res = json_decode($response, true);
+                            // $res = json_decode($response, true);
 
-                            if ($res['status'] != 'ok') {
-                                $result = [
-                                    'code' => 400,
-                                    'status' => 'failed',
-                                    'msg' => 'Proses claim gagal',
-                                    'detail' => $res['detail']
-                                ];
+                            // if ($res['status'] != 'ok') {
+                            //     $result = [
+                            //         'code' => 400,
+                            //         'status' => 'failed',
+                            //         'msg' => 'Proses claim gagal',
+                            //         'detail' => $res['detail']
+                            //     ];
 
-                                $this->output->set_output(json_encode($result));
-                            } else {
-                                $this->MVoucherTukang->claim($id_md5, $id_contact);
-                                // Send Message
-                                $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
-                                $integration_id = $getQontak['integration_id'];
-                                $wa_token = $getQontak['token'];
-                                $template_id = '9ac4e6a5-0a71-4d00-981b-6cf05e5637da';
+                            //     $this->output->set_output(json_encode($result));
+                            // } else {
+                            //     $this->MVoucherTukang->claim($id_md5, $id_contact);
+                            // Send Message
+                            // $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
+                            // $integration_id = $getQontak['integration_id'];
+                            // $wa_token = $getQontak['token'];
+                            // $template_id = '9ac4e6a5-0a71-4d00-981b-6cf05e5637da';
 
-                                $message = "Dana telah ditransfer ke rekening anda. Silahkan cek mutasi anda.";
+                            // $message = "Dana telah ditransfer ke rekening anda. Silahkan cek mutasi anda.";
 
-                                $curl = curl_init();
+                            // $curl = curl_init();
 
-                                curl_setopt_array(
-                                    $curl,
-                                    array(
-                                        CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
-                                        CURLOPT_RETURNTRANSFER => true,
-                                        CURLOPT_ENCODING => '',
-                                        CURLOPT_MAXREDIRS => 10,
-                                        CURLOPT_TIMEOUT => 0,
-                                        CURLOPT_FOLLOWLOCATION => true,
-                                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                        CURLOPT_CUSTOMREQUEST => 'POST',
-                                        CURLOPT_POSTFIELDS => '{
-                                        "to_number": "' . $nomorhp_contact . '",
-                                        "to_name": "' . $nama_contact . '",
-                                        "message_template_id": "' . $template_id . '",
-                                        "channel_integration_id": "' . $integration_id . '",
-                                        "language": {
-                                            "code": "id"
-                                        },
-                                        "parameters": {
-                                            "body": [
-                                            {
-                                                "key": "1",
-                                                "value": "nama",
-                                                "value_text": "' . $nama_contact . '"
-                                            },
-                                            {
-                                                "key": "2",
-                                                "value": "message",
-                                                "value_text": "' . $message . '"
-                                            }
-                                            ]
-                                        }
-                                    }',
-                                        CURLOPT_HTTPHEADER => array(
-                                            'Authorization: Bearer ' . $wa_token,
-                                            'Content-Type: application/json'
-                                        ),
-                                    )
-                                );
+                            // curl_setopt_array(
+                            //     $curl,
+                            //     array(
+                            //         CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
+                            //         CURLOPT_RETURNTRANSFER => true,
+                            //         CURLOPT_ENCODING => '',
+                            //         CURLOPT_MAXREDIRS => 10,
+                            //         CURLOPT_TIMEOUT => 0,
+                            //         CURLOPT_FOLLOWLOCATION => true,
+                            //         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            //         CURLOPT_CUSTOMREQUEST => 'POST',
+                            //         CURLOPT_POSTFIELDS => '{
+                            //         "to_number": "' . $nomorhp_contact . '",
+                            //         "to_name": "' . $nama_contact . '",
+                            //         "message_template_id": "' . $template_id . '",
+                            //         "channel_integration_id": "' . $integration_id . '",
+                            //         "language": {
+                            //             "code": "id"
+                            //         },
+                            //         "parameters": {
+                            //             "body": [
+                            //             {
+                            //                 "key": "1",
+                            //                 "value": "nama",
+                            //                 "value_text": "' . $nama_contact . '"
+                            //             },
+                            //             {
+                            //                 "key": "2",
+                            //                 "value": "message",
+                            //                 "value_text": "' . $message . '"
+                            //             }
+                            //             ]
+                            //         }
+                            //     }',
+                            //         CURLOPT_HTTPHEADER => array(
+                            //             'Authorization: Bearer ' . $wa_token,
+                            //             'Content-Type: application/json'
+                            //         ),
+                            //     )
+                            // );
 
-                                $response = curl_exec($curl);
+                            // $response = curl_exec($curl);
 
-                                curl_close($curl);
+                            // curl_close($curl);
 
-                                $res = json_decode($response, true);
+                            // $res = json_decode($response, true);
 
-                                $status = $res['status'];
+                            // $status = $res['status'];
 
-                                if ($status == 'success') {
-                                    // Send Message
-                                    $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
-                                    $integration_id = $getQontak['integration_id'];
-                                    $wa_token = $getQontak['token'];
-                                    $template_id = '9ac4e6a5-0a71-4d00-981b-6cf05e5637da';
+                            // if ($status == 'success') {
+                            // Send Message
+                            //     $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
+                            //     $integration_id = $getQontak['integration_id'];
+                            //     $wa_token = $getQontak['token'];
+                            //     $template_id = '9ac4e6a5-0a71-4d00-981b-6cf05e5637da';
 
-                                    $message = "Selamat anda telah mendapat potongan diskon 10.000. Program ini disponsori oleh Top Mortar Indonesia";
+                            //     $message = "Selamat anda telah mendapat potongan diskon 10.000. Program ini disponsori oleh Top Mortar Indonesia";
 
-                                    if ($getVoucher['type_voucher'] == 'tokopromo') {
-                                        $message = "Selamat anda telah mendapat potongan diskon 5.000. Program ini disponsori oleh Top Mortar Indonesia";
-                                    }
+                            //     if ($getVoucher['type_voucher'] == 'tokopromo') {
+                            //         $message = "Selamat anda telah mendapat potongan diskon 5.000. Program ini disponsori oleh Top Mortar Indonesia";
+                            //     }
 
-                                    $curl = curl_init();
+                            //     $curl = curl_init();
 
-                                    curl_setopt_array(
-                                        $curl,
-                                        array(
-                                            CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
-                                            CURLOPT_RETURNTRANSFER => true,
-                                            CURLOPT_ENCODING => '',
-                                            CURLOPT_MAXREDIRS => 10,
-                                            CURLOPT_TIMEOUT => 0,
-                                            CURLOPT_FOLLOWLOCATION => true,
-                                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                            CURLOPT_CUSTOMREQUEST => 'POST',
-                                            CURLOPT_POSTFIELDS => '{
-                                        "to_number": "' . $nomorhp_tukang . '",
-                                        "to_name": "' . $nama_tukang . '",
-                                        "message_template_id": "' . $template_id . '",
-                                        "channel_integration_id": "' . $integration_id . '",
-                                        "language": {
-                                            "code": "id"
-                                        },
-                                        "parameters": {
-                                            "body": [
-                                            {
-                                                "key": "1",
-                                                "value": "nama",
-                                                "value_text": "' . $nama_contact . '"
-                                            },
-                                            {
-                                                "key": "2",
-                                                "value": "message",
-                                                "value_text": "' . $message . '"
-                                            }
-                                            ]
-                                        }
-                                    }',
-                                            CURLOPT_HTTPHEADER => array(
-                                                'Authorization: Bearer ' . $wa_token,
-                                                'Content-Type: application/json'
-                                            ),
-                                        )
-                                    );
+                            //     curl_setopt_array(
+                            //         $curl,
+                            //         array(
+                            //             CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
+                            //             CURLOPT_RETURNTRANSFER => true,
+                            //             CURLOPT_ENCODING => '',
+                            //             CURLOPT_MAXREDIRS => 10,
+                            //             CURLOPT_TIMEOUT => 0,
+                            //             CURLOPT_FOLLOWLOCATION => true,
+                            //             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            //             CURLOPT_CUSTOMREQUEST => 'POST',
+                            //             CURLOPT_POSTFIELDS => '{
+                            //         "to_number": "' . $nomorhp_tukang . '",
+                            //         "to_name": "' . $nama_tukang . '",
+                            //         "message_template_id": "' . $template_id . '",
+                            //         "channel_integration_id": "' . $integration_id . '",
+                            //         "language": {
+                            //             "code": "id"
+                            //         },
+                            //         "parameters": {
+                            //             "body": [
+                            //             {
+                            //                 "key": "1",
+                            //                 "value": "nama",
+                            //                 "value_text": "' . $nama_contact . '"
+                            //             },
+                            //             {
+                            //                 "key": "2",
+                            //                 "value": "message",
+                            //                 "value_text": "' . $message . '"
+                            //             }
+                            //             ]
+                            //         }
+                            //     }',
+                            //             CURLOPT_HTTPHEADER => array(
+                            //                 'Authorization: Bearer ' . $wa_token,
+                            //                 'Content-Type: application/json'
+                            //             ),
+                            //         )
+                            //     );
 
-                                    $response = curl_exec($curl);
+                            //     $response = curl_exec($curl);
 
-                                    curl_close($curl);
+                            //     curl_close($curl);
 
-                                    $res = json_decode($response, true);
+                            //     $res = json_decode($response, true);
 
-                                    $status = $res['status'];
+                            //     $status = $res['status'];
 
-                                    if ($status == 'success') {
+                            //     if ($status == 'success') {
 
-                                        $result = [
-                                            'code' => 200,
-                                            'status' => 'ok',
-                                            'msg' => 'Claim voucher berhasil, dana telah masuk ke rekening / e-wallet anda'
-                                        ];
-                                    }
-                                }
+                            //         $result = [
+                            //             'code' => 200,
+                            //             'status' => 'ok',
+                            //             'msg' => 'Claim voucher berhasil, dana telah masuk ke rekening / e-wallet anda'
+                            //         ];
+                            //     }
+                            // }
 
-                                $this->output->set_output(json_encode($result));
-                            }
+                            // $this->output->set_output(json_encode($result));
+                            // }
                         }
                     }
                 }
