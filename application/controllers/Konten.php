@@ -40,7 +40,7 @@ class VoucherTukang extends CI_Controller
                 $result = [
                     'code' => 200,
                     'status' => 'ok',
-                    'msg' => 'Sukses mengambil data penukaran',
+                    'msg' => 'Sukses mengambil data konten',
                     'data' => $getKonten
                 ];
 
