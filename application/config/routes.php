@@ -69,3 +69,5 @@ $route['api/rekeningtoko/(:num)'] = 'RekeningToko/update/$1';
 $route['api/voucher/claim'] = 'VoucherTukang/claim';
 // Get Claimed
 $route['api/voucher/claimed/(:num)'] = 'VoucherTukang/getByIdContact/$1';
+// Konten
+$route['api/konten'] = 'Konten/get';
