@@ -41,7 +41,8 @@ class Konten extends CI_Controller
                     'code' => 200,
                     'status' => 'ok',
                     'msg' => 'Sukses mengambil data konten',
-                    'data' => $getKonten
+                    'data' => $getKonten,
+                    'media_link' => 'https://order.topmortarindonesia.com/assets/img/content_img/'
                 ];
 
                 $this->output->set_output(json_encode($result));
