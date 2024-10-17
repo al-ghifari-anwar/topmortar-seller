@@ -28,7 +28,14 @@ class MVoucherTukang extends CI_Model
 
     public function claim($id_md5, $id_contact)
     {
-        $result = $this->db->update('tb_voucher_tukang', ['id_contact' => $id_contact, 'is_claimed' => 1, 'claim_date' => date("Y-m-d H:i:s")], ['id_md5' => $id_md5]);
+        $result = $this->db->update('tb_voucher_tukang', ['id_contact' => $id_contact, 'is_claimed' => 1, 'claim_date' => date("Y-m-d H:i:s")], ['id_md5' => $id_md5, 'is_claimed' => 0]);
+
+        return $result;
+    }
+
+    public function checkStoreClaim($id_md5, $id_contact)
+    {
+        $result = $this->db->get_where('tb_voucher_tukang', ['id_contact' => $id_contact, 'id_md5' => $id_md5])->row_array();
 
         return $result;
     }
