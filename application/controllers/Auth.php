@@ -20,6 +20,10 @@ class Auth extends CI_Controller
     {
         $this->output->set_content_type('application/json');
 
+        $post = json_decode(file_get_contents('php://input'), true) != null ? json_decode(file_get_contents('php://input'), true) : $this->input->post();
+        $nomorhp = $post['nomorhp'];
+        $nomorhp = "62" . substr($nomorhp, 1);
+
         $getContact = $this->MContact->getByNomorhp();
 
         if ($getContact == null) {
@@ -28,6 +32,67 @@ class Auth extends CI_Controller
                 'status' => 'failed',
                 'msg' => 'Nomor tidak terdaftar'
             ];
+
+            // Send Message
+            $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => 1])->row_array();
+            $integration_id = $getQontak['integration_id'];
+            $wa_token = $getQontak['token'];
+            $template_id = 'c80d503f-bc62-450e-87e2-b7e794855145';
+
+            $message = "Ada pendaftar top seller baru dengan nomor " . $nomorhp . "";
+            $nama_admin = 'Arie';
+            $full_name = 'Automated Message';
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => '{
+                        "to_number": "' . "6287757904850" . '",
+                        "to_name": "' . $nama_admin . '",
+                        "message_template_id": "' . $template_id . '",
+                        "channel_integration_id": "' . $integration_id . '",
+                        "language": {
+                            "code": "id"
+                        },
+                        "parameters": {
+                            "body": [
+                            {
+                                "key": "1",
+                                "value": "nama",
+                                "value_text": "' . $nama_admin . '"
+                            },
+                            {
+                                "key": "2",
+                                "value": "message",
+                                "value_text": "' . $message . '"
+                            },
+                            {
+                                "key": "3",
+                                "value": "sales",
+                                "value_text": "' . $full_name . '"
+                            }
+                            ]
+                        }
+                        }',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . $wa_token,
+                    'Content-Type: application/json'
+                ),
+            ));
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+
+            $res = json_decode($response, true);
 
             $this->output->set_output(json_encode($result));
         } else {
