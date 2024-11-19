@@ -154,6 +154,8 @@ class VoucherTukang extends CI_Controller
                                 $res = json_decode($response, true);
 
                                 if ($res['status'] != 'ok') {
+                                    $this->MVoucherTukang->claim($id_md5, $id_contact);
+
                                     $result = [
                                         'code' => 400,
                                         'status' => 'failed',
@@ -306,7 +308,7 @@ class VoucherTukang extends CI_Controller
                                         $status = $res['status'];
 
                                         if ($status == 'success') {
-                                            $this->MVoucherTukang->claim($id_md5, $id_contact);
+                                            // $this->MVoucherTukang->claim($id_md5, $id_contact);
 
                                             $result = [
                                                 'code' => 200,
