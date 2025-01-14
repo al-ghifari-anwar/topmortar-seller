@@ -5,6 +5,7 @@ class MKonten extends CI_Model
 {
     public function get()
     {
+        $this->db->order_by('created_at', 'DESC');
         $result = $this->db->get('tb_konten')->result_array();
 
         return $result;
