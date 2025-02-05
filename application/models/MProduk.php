@@ -5,7 +5,6 @@ class MProduk extends CI_Model
 {
     public function get()
     {
-        $this->db->order_by('created_at', 'DESC');
         $result = $this->db->get('tb_produk')->result_array();
 
         return $result;
