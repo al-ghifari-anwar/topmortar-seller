@@ -39,7 +39,7 @@ class MVoucherTukang extends CI_Model
 
     public function checkStoreClaim($id_md5, $id_contact)
     {
-        $result = $this->db->get_where('tb_voucher_tukang', ['id_contact' => $id_contact, 'id_md5' => $id_md5])->row_array();
+        $result = $this->db->get_where('tb_voucher_tukang', ['id_contact' => $id_contact, 'id_md5' => $id_md5, 'is_claimed' => 1])->row_array();
 
         return $result;
     }
