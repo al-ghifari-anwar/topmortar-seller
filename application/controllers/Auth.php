@@ -150,6 +150,8 @@ class Auth extends CI_Controller
 
             $message = "Gunakan kode OTP *" . $getOtp['otp'] . "* untuk melanjutkan proses pendaftaran akun. Kode ini berlaku selama 5 menit. Jangan bagikan kode ini kepada siapapun.";
 
+            $sender = "PT Top Mortar Indonesia";
+
             $curl = curl_init();
 
             curl_setopt_array(
@@ -182,6 +184,11 @@ class Auth extends CI_Controller
                             "key": "2",
                             "value": "message",
                             "value_text": "' . $message . '"
+                        },
+                        {
+                            "key": "3",
+                            "value": "sender",
+                            "value_text": "' . $sender . '"
                         }
                         ]
                     }
