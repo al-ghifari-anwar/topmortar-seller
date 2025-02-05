@@ -20,7 +20,7 @@ class Produk extends CI_Controller
     {
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             if (isset($_GET['city'])) {
-                $id_city = $_GET['id_city'];
+                $id_city = $_GET['city'];
 
                 $this->output->set_content_type('application/json');
 
