@@ -71,3 +71,4 @@ $route['api/voucher/claim'] = 'VoucherTukang/claim';
 $route['api/voucher/claimed/(:num)'] = 'VoucherTukang/getByIdContact/$1';
 // Konten
 $route['api/konten'] = 'Konten/get';
+// Produk
