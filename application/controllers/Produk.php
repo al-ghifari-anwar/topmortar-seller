@@ -35,7 +35,7 @@ class Produk extends CI_Controller
                     $stokIn = $this->MStok->getStokIn($id_produk);
                     $stokOut = $this->MStok->getStokOut($id_produk);
 
-                    $stok = $stokIn['jml_stok'] - $stokOut['stok_out'];
+                    $stok = $stokIn['jml_stok'] - $stokOut['jml_stok'];
                     $produk['stok'] = $stok;
 
                     $arrayData[] = $produk;
@@ -72,7 +72,7 @@ class Produk extends CI_Controller
                     $stokIn = $this->MStok->getStokIn($id_produk);
                     $stokOut = $this->MStok->getStokOut($id_produk);
 
-                    $stok = $stokIn['jml_stok'] - $stokOut['stok_out'];
+                    $stok = $stokIn['jml_stok'] - $stokOut['jml_stok'];
                     $produk['stok'] = $stok;
 
                     $arrayData[] = $produk;
