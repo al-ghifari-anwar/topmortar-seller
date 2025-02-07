@@ -9,6 +9,7 @@ class Produk extends CI_Controller
         date_default_timezone_set('Asia/Jakarta');
         $this->load->model('MContact');
         $this->load->model('MProduk');
+        $this->load->model('MStok');
     }
 
     public function index()
@@ -24,9 +25,23 @@ class Produk extends CI_Controller
 
                 $this->output->set_content_type('application/json');
 
-                $getProduk = $this->MProduk->getByIdCity($id_city);
+                $produks = $this->MProduk->getByIdCity($id_city);
 
-                if ($getProduk == null) {
+                $arrayData = array();
+
+                foreach ($produks as $produk) {
+                    $id_produk = $produk['id_produk'];
+
+                    $stokIn = $this->MStok->getStokIn($id_produk);
+                    $stokOut = $this->MStok->getStokOut($id_produk);
+
+                    $stok = $stokIn['jml_stok'] - $stokOut['stok_out'];
+                    $produk['stok'] = $stok;
+
+                    $arrayData[] = $produk;
+                }
+
+                if ($produks == null) {
                     $result = [
                         'code' => 400,
                         'status' => 'failed',
@@ -39,7 +54,7 @@ class Produk extends CI_Controller
                         'code' => 200,
                         'status' => 'ok',
                         'msg' => 'Sukses mengambil data produk',
-                        'data' => $getProduk,
+                        'data' => $arrayData,
                     ];
 
                     $this->output->set_output(json_encode($result));
@@ -47,9 +62,23 @@ class Produk extends CI_Controller
             } else {
                 $this->output->set_content_type('application/json');
 
-                $getProduk = $this->MProduk->get();
+                $produks = $this->MProduk->get();
 
-                if ($getProduk == null) {
+                $arrayData = array();
+
+                foreach ($produks as $produk) {
+                    $id_produk = $produk['id_produk'];
+
+                    $stokIn = $this->MStok->getStokIn($id_produk);
+                    $stokOut = $this->MStok->getStokOut($id_produk);
+
+                    $stok = $stokIn['jml_stok'] - $stokOut['stok_out'];
+                    $produk['stok'] = $stok;
+
+                    $arrayData[] = $produk;
+                }
+
+                if ($produks == null) {
                     $result = [
                         'code' => 400,
                         'status' => 'failed',
@@ -62,7 +91,7 @@ class Produk extends CI_Controller
                         'code' => 200,
                         'status' => 'ok',
                         'msg' => 'Sukses mengambil data produk',
-                        'data' => $getProduk,
+                        'data' => $arrayData,
                     ];
 
                     $this->output->set_output(json_encode($result));
