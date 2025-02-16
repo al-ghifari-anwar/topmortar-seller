@@ -25,6 +25,8 @@ class VoucherTukang extends CI_Controller
 
             $this->output->set_content_type('application/json');
 
+            $contact = $this->MContact->getById($id_contact);
+
             $getVoucherTukang = $this->MVoucherTukang->getByIdContact($id_contact);
 
             if ($getVoucherTukang == null) {
@@ -40,6 +42,7 @@ class VoucherTukang extends CI_Controller
                     'code' => 200,
                     'status' => 'ok',
                     'msg' => 'Sukses mengambil data penukaran',
+                    'quota' => $contact['quota_priority'],
                     'data' => $getVoucherTukang
                 ];
 
