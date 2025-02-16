@@ -33,6 +33,7 @@ class VoucherTukang extends CI_Controller
                 $result = [
                     'code' => 400,
                     'status' => 'failed',
+                    'quota' => $contact['quota_priority'],
                     'msg' => 'Tidak ada data'
                 ];
 
