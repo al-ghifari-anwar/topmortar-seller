@@ -25,12 +25,15 @@ class VoucherTukang extends CI_Controller
 
             $this->output->set_content_type('application/json');
 
+            $contact = $this->MContact->getById($id_contact);
+
             $getVoucherTukang = $this->MVoucherTukang->getByIdContact($id_contact);
 
             if ($getVoucherTukang == null) {
                 $result = [
                     'code' => 400,
                     'status' => 'failed',
+                    'quota' => $contact['quota_priority'],
                     'msg' => 'Tidak ada data'
                 ];
 
@@ -40,6 +43,7 @@ class VoucherTukang extends CI_Controller
                     'code' => 200,
                     'status' => 'ok',
                     'msg' => 'Sukses mengambil data penukaran',
+                    'quota' => $contact['quota_priority'],
                     'data' => $getVoucherTukang
                 ];
 
@@ -68,6 +72,17 @@ class VoucherTukang extends CI_Controller
         $nomorhp_contact = $getContact['nomorhp'];
         $nama_contact = $getContact['nama'];
         $id_distributor = $getContact['id_distributor'];
+        $topseller_active = $getContact['topseller_active'];
+
+        if ($topseller_active == 0) {
+            $result = [
+                'code' => 400,
+                'status' => 'failed',
+                'msg' => 'Toko anda tidak aktif, hubungi Top Mortar Official di 087826210888 untuk informasi lebih lanjut'
+            ];
+
+            $this->output->set_output(json_encode($result));
+        }
 
         if ($getContact['store_status'] == 'blacklist') {
             $result = [

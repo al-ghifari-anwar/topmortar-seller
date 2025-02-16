@@ -19,7 +19,7 @@ class MVoucherTukang extends CI_Model
 
     public function getByIdContact($id_contact)
     {
-        $this->db->join('tb_tukang', 'tb_tukang.id_tukang = tb_voucher_tukang.id_tukang');
+        $this->db->join('tb_tukang', 'tb_tukang.id_tukang = tb_voucher_tukang.id_tukang', 'LEFT');
         $this->db->order_by('tb_voucher_tukang.created_at', 'DESC');
         $result = $this->db->get_where('tb_voucher_tukang', ['id_contact' => $id_contact, 'is_claimed' => 1])->result_array();
 
