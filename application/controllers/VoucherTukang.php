@@ -74,6 +74,22 @@ class VoucherTukang extends CI_Controller
         $id_distributor = $getContact['id_distributor'];
         $topseller_active = $getContact['topseller_active'];
 
+        $getVouchers = $this->MVoucherTukang->getByIdContact($id_contact);
+        $quotaContact = $getContact['quota_priority'];
+        $countVoucher = count($getVouchers);
+
+        $currentQuota = $quotaContact - $countVoucher;
+
+        if ($currentQuota < 0) {
+            $result = [
+                'code' => 400,
+                'status' => 'failed',
+                'msg' => 'Quota penukaran telah habis, hubungi Top Mortar Official di 087826210888 untuk informasi lebih lanjut'
+            ];
+
+            $this->output->set_output(json_encode($result));
+        }
+
         if ($topseller_active == 0) {
             $result = [
                 'code' => 400,
