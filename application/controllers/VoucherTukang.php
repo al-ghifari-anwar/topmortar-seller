@@ -80,7 +80,7 @@ class VoucherTukang extends CI_Controller
 
         $currentQuota = $quotaContact - $countVoucher;
 
-        if ($currentQuota < 0) {
+        if ($currentQuota <= 0) {
             $result = [
                 'code' => 400,
                 'status' => 'failed',
