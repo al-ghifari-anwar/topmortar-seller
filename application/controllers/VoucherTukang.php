@@ -87,7 +87,7 @@ class VoucherTukang extends CI_Controller
                 'msg' => 'Quota penukaran telah habis, hubungi Top Mortar Official di 087826210888 untuk informasi lebih lanjut'
             ];
 
-            $this->output->set_output(json_encode($result));
+            return $this->output->set_output(json_encode($result));
         }
 
         if ($topseller_active == 0) {
@@ -97,7 +97,7 @@ class VoucherTukang extends CI_Controller
                 'msg' => 'Toko anda tidak aktif, hubungi Top Mortar Official di 087826210888 untuk informasi lebih lanjut'
             ];
 
-            $this->output->set_output(json_encode($result));
+            return $this->output->set_output(json_encode($result));
         }
 
         if ($getContact['store_status'] == 'blacklist') {
