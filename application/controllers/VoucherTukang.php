@@ -37,7 +37,7 @@ class VoucherTukang extends CI_Controller
                     'msg' => 'Tidak ada data'
                 ];
 
-                $this->output->set_output(json_encode($result));
+                return $this->output->set_output(json_encode($result));
             } else {
                 $result = [
                     'code' => 200,
@@ -47,7 +47,7 @@ class VoucherTukang extends CI_Controller
                     'data' => $getVoucherTukang
                 ];
 
-                $this->output->set_output(json_encode($result));
+                return $this->output->set_output(json_encode($result));
             }
         } else {
             $result = [
@@ -56,7 +56,7 @@ class VoucherTukang extends CI_Controller
                 'msg' => 'Not Found'
             ];
 
-            $this->output->set_output(json_encode($result));
+            return $this->output->set_output(json_encode($result));
         }
     }
 
@@ -107,7 +107,7 @@ class VoucherTukang extends CI_Controller
                 'msg' => 'Toko anda tidak memenuhi syarat, hubungi Top Mortar Official di 087826210888 untuk informasi lebih lanjut'
             ];
 
-            $this->output->set_output(json_encode($result));
+            return $this->output->set_output(json_encode($result));
         } else {
             $getVoucher = $this->MVoucherTukang->getByIdMd5($id_md5);
             $id_tukang = $getVoucher['id_tukang'];
@@ -123,7 +123,7 @@ class VoucherTukang extends CI_Controller
                     'msg' => 'Voucher tidak ditemukan'
                 ];
 
-                $this->output->set_output(json_encode($result));
+                return $this->output->set_output(json_encode($result));
             } else {
                 if ($getVoucher['is_claimed'] == 1) {
                     $result = [
@@ -132,7 +132,7 @@ class VoucherTukang extends CI_Controller
                         'msg' => 'QR voucher sudah pernah diclaim'
                     ];
 
-                    $this->output->set_output(json_encode($result));
+                    return $this->output->set_output(json_encode($result));
                 } else {
                     $checkStoreClaim = $this->MVoucherTukang->checkStoreClaim($id_md5, $id_contact);
 
@@ -143,7 +143,7 @@ class VoucherTukang extends CI_Controller
                             'msg' => 'QR voucher sudah pernah diclaim di toko ini'
                         ];
 
-                        $this->output->set_output(json_encode($result));
+                        return $this->output->set_output(json_encode($result));
                     } else {
                         if ($getVoucher['exp_at'] < date("Y-m-d")) {
                             $result = [
@@ -152,7 +152,7 @@ class VoucherTukang extends CI_Controller
                                 'msg' => 'QR voucher sudah expired'
                             ];
 
-                            $this->output->set_output(json_encode($result));
+                            return $this->output->set_output(json_encode($result));
                         } else {
                             // Success
                             $getRekeningToko = $this->MRekeningToko->getByIdContact($id_contact);
@@ -194,7 +194,7 @@ class VoucherTukang extends CI_Controller
                                         'detail' => $res['detail']
                                     ];
 
-                                    $this->output->set_output(json_encode($result));
+                                    return $this->output->set_output(json_encode($result));
                                 } else {
                                     // Send Message
                                     $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
@@ -347,7 +347,7 @@ class VoucherTukang extends CI_Controller
                                                 'msg' => 'Claim voucher berhasil, dana telah masuk ke rekening / e-wallet anda'
                                             ];
 
-                                            $this->output->set_output(json_encode($result));
+                                            return $this->output->set_output(json_encode($result));
                                         }
                                     } else {
                                         $result = [
@@ -357,7 +357,7 @@ class VoucherTukang extends CI_Controller
                                             'detail' => $res
                                         ];
 
-                                        $this->output->set_output(json_encode($result));
+                                        return $this->output->set_output(json_encode($result));
                                     }
                                 }
                             }
