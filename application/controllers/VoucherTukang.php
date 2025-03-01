@@ -125,6 +125,18 @@ class VoucherTukang extends CI_Controller
 
                 return $this->output->set_output(json_encode($result));
             } else {
+                if ($getVoucher['type_voucher'] == 'priority' || $getVoucher['type_voucher'] == 'tokopromo') {
+                    if ($getVoucher['id_contact'] != $id_contact) {
+                        $result = [
+                            'code' => 400,
+                            'status' => 'failed',
+                            'msg' => 'Voucher anda tidak dapat diclaim di toko ini'
+                        ];
+
+                        return $this->output->set_output(json_encode($result));
+                    }
+                }
+
                 if ($getVoucher['is_claimed'] == 1) {
                     $result = [
                         'code' => 400,
