@@ -17,7 +17,7 @@ class MContact extends CI_Model
         $id_contact = $post['id_contact'];
         $pass_contact = md5("TopSeller" . md5($post['pass_contact']));
 
-        $result = $this->db->update('tb_contact', ['pass_contact' => $pass_contact], ['id_contact' => $id_contact]);
+        $result = $this->db->update('tb_contact', ['pass_contact' => $pass_contact, 'quota_priority' => 5], ['id_contact' => $id_contact]);
 
         return $result;
     }
