@@ -37,7 +37,7 @@ class Auth extends CI_Controller
             $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => 1])->row_array();
             $integration_id = $getQontak['integration_id'];
             $wa_token = $getQontak['token'];
-            $template_id = 'c80d503f-bc62-450e-87e2-b7e794855145';
+            $template_id = '9241bf86-ae94-4aa8-8975-551409af90b9';
 
             $message = "Ada pendaftar top seller baru dengan nomor " . $nomorhp . "";
             $nama_admin = 'Arie';
@@ -146,7 +146,7 @@ class Auth extends CI_Controller
             $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
             $integration_id = $getQontak['integration_id'];
             $wa_token = $getQontak['token'];
-            $template_id = 'c80d503f-bc62-450e-87e2-b7e794855145';
+            $template_id = '9241bf86-ae94-4aa8-8975-551409af90b9';
 
             $message = "Gunakan kode OTP *" . $getOtp['otp'] . "* untuk melanjutkan proses pendaftaran akun. Kode ini berlaku selama 5 menit. Jangan bagikan kode ini kepada siapapun.";
 
