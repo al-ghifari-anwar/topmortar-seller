@@ -197,7 +197,6 @@ class VoucherTukang extends CI_Controller
                                 $res = json_decode($response, true);
 
                                 if ($res['status'] != 'ok') {
-                                    $this->MVoucherTukang->claim($id_md5, $id_contact);
 
                                     $result = [
                                         'code' => 400,
@@ -208,6 +207,9 @@ class VoucherTukang extends CI_Controller
 
                                     return $this->output->set_output(json_encode($result));
                                 } else {
+                                    // Claim
+                                    $this->MVoucherTukang->claim($id_md5, $id_contact);
+
                                     // Send Message
                                     $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
                                     $integration_id = $getQontak['integration_id'];
