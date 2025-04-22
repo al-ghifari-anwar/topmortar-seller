@@ -175,19 +175,28 @@ class VoucherTukang extends CI_Controller
                             $swift_code = $getRekeningToko['swift_bank'];
 
                             if ($is_bca == 1) {
-                                $to_name = str_replace(" ", "%20", $to_name);
-                                // TF intrabank
+                                $distributor = $this->db->get_where('tb_distributor', ['id_distributor' => 1])->row_array();
+                                $api_key = $distributor['api_key'];
+                                // !! TF intrabank
+                                $amount = 10000;
+                                $remark = "Auto Trf Vc - " . substr($to_name, 0, 6);
+
                                 $curl = curl_init();
 
                                 curl_setopt_array($curl, array(
-                                    CURLOPT_URL => 'https://apibca.topmortarindonesia.com/snapIntrabankVctukang.php?to=' . $to_account . '&to_name=' . $to_name,
+                                    CURLOPT_URL => 'https://central.topmortarindonesia.com/intra',
                                     CURLOPT_RETURNTRANSFER => true,
                                     CURLOPT_ENCODING => '',
                                     CURLOPT_MAXREDIRS => 10,
                                     CURLOPT_TIMEOUT => 0,
                                     CURLOPT_FOLLOWLOCATION => true,
                                     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                    CURLOPT_CUSTOMREQUEST => 'GET',
+                                    CURLOPT_CUSTOMREQUEST => 'POST',
+                                    CURLOPT_POSTFIELDS => array('amount' => $amount, 'toName' => $to_name, 'toAccount' => $to_account, 'remark' => $remark),
+                                    CURLOPT_HTTPHEADER => array(
+                                        'x-api-key: ' . $api_key,
+                                        'x-timestamp: ' . date("Y-m-d H:i:s")
+                                    ),
                                 ));
 
                                 $response = curl_exec($curl);
@@ -196,7 +205,7 @@ class VoucherTukang extends CI_Controller
 
                                 $res = json_decode($response, true);
 
-                                if ($res['status'] != 'ok') {
+                                if ($res['code'] != 200) {
 
                                     $result = [
                                         'code' => 400,
