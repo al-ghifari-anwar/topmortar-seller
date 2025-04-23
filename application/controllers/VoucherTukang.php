@@ -175,8 +175,8 @@ class VoucherTukang extends CI_Controller
                             $swift_code = $getRekeningToko['swift_bank'];
 
                             if ($is_bca == 1) {
-                                $distributor = $this->db->get_where('tb_distributor', ['id_distributor' => 1])->row_array();
-                                $api_key = $distributor['api_key'];
+                                // $distributor = $this->db->get_where('tb_distributor', ['id_distributor' => 1])->row_array();
+                                $api_key = '7d6cf89089723eb4e4727cec99f1962f';
                                 // !! TF intrabank
                                 $amount = 10000;
                                 $remark = "Auto Trf Vc - " . substr($to_name, 0, 6);
