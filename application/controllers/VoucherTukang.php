@@ -216,6 +216,22 @@ class VoucherTukang extends CI_Controller
 
                                     return $this->output->set_output(json_encode($result));
                                 } else {
+                                    $resData = $res['data'];
+
+                                    $statusIntra = $resData['responseMessage'] == 'Successful' ? 'success' : 'failed';
+
+                                    $logData = [
+                                        'source_account' => '8881051362',
+                                        'to_account' => $to_account,
+                                        'amount_log_bca' => $amount,
+                                        'status_log_bca' => $statusIntra,
+                                        'ref_log_bca' => $resData['referenceNo'],
+                                        'created_at' => date("Y-m-d H:i:s"),
+                                        'updated_at' => date("Y-m-d H:i:s"),
+                                    ];
+
+                                    $saveLog = $this->db->insert('tb_log_bca', $logData);
+
                                     // Claim
                                     $this->MVoucherTukang->claim($id_md5, $id_contact);
 
