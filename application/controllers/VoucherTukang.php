@@ -232,91 +232,27 @@ class VoucherTukang extends CI_Controller
 
                                     $saveLog = $this->db->insert('tb_log_bca', $logData);
 
-                                    // Claim
-                                    $this->MVoucherTukang->claim($id_md5, $id_contact);
+                                    if ($statusIntra != 'success') {
+                                        $result = [
+                                            'code' => 400,
+                                            'status' => 'failed',
+                                            'msg' => 'Failed',
+                                            'detail' => $res
+                                        ];
 
-                                    // Send Message
-                                    $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
-                                    $integration_id = $getQontak['integration_id'];
-                                    $wa_token = $getQontak['token'];
-                                    // $template_id = '781b4601-fba6-4c69-81ad-164a680ecce7';
-                                    $template_id = '7bf2d2a0-bdd5-4c70-ba9f-a9665f66a841';
+                                        return $this->output->set_output(json_encode($result));
+                                    } else {
+                                        // Claim
+                                        $this->MVoucherTukang->claim($id_md5, $id_contact);
 
-                                    $message = "Transaksi claim voucher atas nama " . $nama_tukang . " Berhasil. Dana telah ditransfer ke rekening anda. Silahkan cek mutasi anda.";
-
-                                    $curl = curl_init();
-
-                                    curl_setopt_array(
-                                        $curl,
-                                        array(
-                                            CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
-                                            CURLOPT_RETURNTRANSFER => true,
-                                            CURLOPT_ENCODING => '',
-                                            CURLOPT_MAXREDIRS => 10,
-                                            CURLOPT_TIMEOUT => 0,
-                                            CURLOPT_FOLLOWLOCATION => true,
-                                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                            CURLOPT_CUSTOMREQUEST => 'POST',
-                                            CURLOPT_POSTFIELDS => '{
-                                            "to_number": "' . $nomorhp_contact . '",
-                                            "to_name": "' . $nama_contact . '",
-                                            "message_template_id": "' . $template_id . '",
-                                            "channel_integration_id": "' . $integration_id . '",
-                                            "language": {
-                                                "code": "id"
-                                            },
-                                            "parameters": {
-                                                "header":{
-                                                    "format":"IMAGE",
-                                                    "params": [
-                                                        {
-                                                            "key":"url",
-                                                            "value":"https://seller.topmortarindonesia.com/assets/img/notif_toko.png"
-                                                        },
-                                                        {
-                                                            "key":"filename",
-                                                            "value":"qrtukang.png"
-                                                        }
-                                                    ]
-                                                },
-                                                "body": [
-                                                {
-                                                    "key": "1",
-                                                    "value": "nama",
-                                                    "value_text": "' . $message . '"
-                                                }
-                                                ]
-                                            }
-                                        }',
-                                            CURLOPT_HTTPHEADER => array(
-                                                'Authorization: Bearer ' . $wa_token,
-                                                'Content-Type: application/json'
-                                            ),
-                                        )
-                                    );
-
-                                    $response = curl_exec($curl);
-
-                                    curl_close($curl);
-
-                                    $res = json_decode($response, true);
-
-                                    $status = $res['status'];
-
-                                    if ($status == 'success') {
-                                        // Send Message Tukang
+                                        // Send Message
                                         $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
                                         $integration_id = $getQontak['integration_id'];
                                         $wa_token = $getQontak['token'];
+                                        // $template_id = '781b4601-fba6-4c69-81ad-164a680ecce7';
                                         $template_id = '7bf2d2a0-bdd5-4c70-ba9f-a9665f66a841';
 
-                                        $message = "Selamat anda telah mendapat potongan diskon 10.000. Program ini disponsori oleh Top Mortar Indonesia";
-                                        $img_tukang = "https://seller.topmortarindonesia.com/assets/img/notif_tukang.png";
-
-                                        if ($getVoucher['type_voucher'] == 'tokopromo') {
-                                            $message = "Selamat anda telah mendapat potongan diskon 5.000. Program ini disponsori oleh Top Mortar Indonesia";
-                                            $img_tukang = "https://seller.topmortarindonesia.com/assets/img/notif_tukang_tokopromo.png";
-                                        }
+                                        $message = "Transaksi claim voucher atas nama " . $nama_tukang . " Berhasil. Dana telah ditransfer ke rekening anda. Silahkan cek mutasi anda.";
 
                                         $curl = curl_init();
 
@@ -332,36 +268,36 @@ class VoucherTukang extends CI_Controller
                                                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                                                 CURLOPT_CUSTOMREQUEST => 'POST',
                                                 CURLOPT_POSTFIELDS => '{
-                                            "to_number": "' . $nomorhp_tukang . '",
-                                            "to_name": "' . $nama_tukang . '",
-                                            "message_template_id": "' . $template_id . '",
-                                            "channel_integration_id": "' . $integration_id . '",
-                                            "language": {
-                                                "code": "id"
-                                            },
-                                            "parameters": {
-                                                "header":{
-                                                    "format":"IMAGE",
-                                                    "params": [
-                                                        {
-                                                            "key":"url",
-                                                            "value":"' . $img_tukang . '"
-                                                        },
-                                                        {
-                                                            "key":"filename",
-                                                            "value":"qrtukang.png"
-                                                        }
-                                                    ]
+                                                "to_number": "' . $nomorhp_contact . '",
+                                                "to_name": "' . $nama_contact . '",
+                                                "message_template_id": "' . $template_id . '",
+                                                "channel_integration_id": "' . $integration_id . '",
+                                                "language": {
+                                                    "code": "id"
                                                 },
-                                                "body": [
-                                                {
-                                                    "key": "1",
-                                                    "value": "nama",
-                                                    "value_text": "' . $message . '"
+                                                "parameters": {
+                                                    "header":{
+                                                        "format":"IMAGE",
+                                                        "params": [
+                                                            {
+                                                                "key":"url",
+                                                                "value":"https://seller.topmortarindonesia.com/assets/img/notif_toko.png"
+                                                            },
+                                                            {
+                                                                "key":"filename",
+                                                                "value":"qrtukang.png"
+                                                            }
+                                                        ]
+                                                    },
+                                                    "body": [
+                                                    {
+                                                        "key": "1",
+                                                        "value": "nama",
+                                                        "value_text": "' . $message . '"
+                                                    }
+                                                    ]
                                                 }
-                                                ]
-                                            }
-                                        }',
+                                            }',
                                                 CURLOPT_HTTPHEADER => array(
                                                     'Authorization: Bearer ' . $wa_token,
                                                     'Content-Type: application/json'
@@ -378,25 +314,100 @@ class VoucherTukang extends CI_Controller
                                         $status = $res['status'];
 
                                         if ($status == 'success') {
-                                            // $this->MVoucherTukang->claim($id_md5, $id_contact);
+                                            // Send Message Tukang
+                                            $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
+                                            $integration_id = $getQontak['integration_id'];
+                                            $wa_token = $getQontak['token'];
+                                            $template_id = '7bf2d2a0-bdd5-4c70-ba9f-a9665f66a841';
 
+                                            $message = "Selamat anda telah mendapat potongan diskon 10.000. Program ini disponsori oleh Top Mortar Indonesia";
+                                            $img_tukang = "https://seller.topmortarindonesia.com/assets/img/notif_tukang.png";
+
+                                            if ($getVoucher['type_voucher'] == 'tokopromo') {
+                                                $message = "Selamat anda telah mendapat potongan diskon 5.000. Program ini disponsori oleh Top Mortar Indonesia";
+                                                $img_tukang = "https://seller.topmortarindonesia.com/assets/img/notif_tukang_tokopromo.png";
+                                            }
+
+                                            $curl = curl_init();
+
+                                            curl_setopt_array(
+                                                $curl,
+                                                array(
+                                                    CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
+                                                    CURLOPT_RETURNTRANSFER => true,
+                                                    CURLOPT_ENCODING => '',
+                                                    CURLOPT_MAXREDIRS => 10,
+                                                    CURLOPT_TIMEOUT => 0,
+                                                    CURLOPT_FOLLOWLOCATION => true,
+                                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                                    CURLOPT_CUSTOMREQUEST => 'POST',
+                                                    CURLOPT_POSTFIELDS => '{
+                                                "to_number": "' . $nomorhp_tukang . '",
+                                                "to_name": "' . $nama_tukang . '",
+                                                "message_template_id": "' . $template_id . '",
+                                                "channel_integration_id": "' . $integration_id . '",
+                                                "language": {
+                                                    "code": "id"
+                                                },
+                                                "parameters": {
+                                                    "header":{
+                                                        "format":"IMAGE",
+                                                        "params": [
+                                                            {
+                                                                "key":"url",
+                                                                "value":"' . $img_tukang . '"
+                                                            },
+                                                            {
+                                                                "key":"filename",
+                                                                "value":"qrtukang.png"
+                                                            }
+                                                        ]
+                                                    },
+                                                    "body": [
+                                                    {
+                                                        "key": "1",
+                                                        "value": "nama",
+                                                        "value_text": "' . $message . '"
+                                                    }
+                                                    ]
+                                                }
+                                            }',
+                                                    CURLOPT_HTTPHEADER => array(
+                                                        'Authorization: Bearer ' . $wa_token,
+                                                        'Content-Type: application/json'
+                                                    ),
+                                                )
+                                            );
+
+                                            $response = curl_exec($curl);
+
+                                            curl_close($curl);
+
+                                            $res = json_decode($response, true);
+
+                                            $status = $res['status'];
+
+                                            if ($status == 'success') {
+                                                // $this->MVoucherTukang->claim($id_md5, $id_contact);
+
+                                                $result = [
+                                                    'code' => 200,
+                                                    'status' => 'ok',
+                                                    'msg' => 'Claim voucher berhasil, dana telah masuk ke rekening / e-wallet anda'
+                                                ];
+
+                                                return $this->output->set_output(json_encode($result));
+                                            }
+                                        } else {
                                             $result = [
-                                                'code' => 200,
-                                                'status' => 'ok',
-                                                'msg' => 'Claim voucher berhasil, dana telah masuk ke rekening / e-wallet anda'
+                                                'code' => 400,
+                                                'status' => 'failed',
+                                                'msg' => 'Failed',
+                                                'detail' => $res
                                             ];
 
                                             return $this->output->set_output(json_encode($result));
                                         }
-                                    } else {
-                                        $result = [
-                                            'code' => 400,
-                                            'status' => 'failed',
-                                            'msg' => 'Failed',
-                                            'detail' => $res
-                                        ];
-
-                                        return $this->output->set_output(json_encode($result));
                                     }
                                 }
                             }
