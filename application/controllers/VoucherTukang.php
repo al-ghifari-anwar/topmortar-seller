@@ -226,6 +226,7 @@ class VoucherTukang extends CI_Controller
                                         'amount_log_bca' => $amount,
                                         'status_log_bca' => $statusIntra,
                                         'ref_log_bca' => $resData['referenceNo'],
+                                        'desc_log_bca' => $resData['responseMessage'],
                                         'created_at' => date("Y-m-d H:i:s"),
                                         'updated_at' => date("Y-m-d H:i:s"),
                                     ];
