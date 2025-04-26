@@ -236,7 +236,7 @@ class VoucherTukang extends CI_Controller
                                         $result = [
                                             'code' => 400,
                                             'status' => 'failed',
-                                            'msg' => 'Failed',
+                                            'msg' => 'Transaksi gagal, harap coba lagi',
                                             'detail' => $res
                                         ];
 
