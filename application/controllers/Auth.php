@@ -337,7 +337,7 @@ class Auth extends CI_Controller
             } else {
                 if ($getContact['is_deleted'] == 1) {
                     $result = [
-                        'code' => 400,
+                        'code' => 401,
                         'status' => 'failed',
                         'msg' => 'Akun anda tidak dapat ditemukan'
                     ];
