@@ -9,7 +9,8 @@ class Produk extends CI_Controller
         date_default_timezone_set('Asia/Jakarta');
         $this->load->model('MContact');
         $this->load->model('MProduk');
-        $this->load->model('MStok');
+        $this->load->model('MCartDetail');
+        $this->load->model('MCart');
     }
 
     public function index()
@@ -19,26 +20,31 @@ class Produk extends CI_Controller
 
     public function get()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-            if (isset($_GET['city'])) {
-                $id_city = $_GET['city'];
+        $this->output->set_content_type('application/json');
 
-                $this->output->set_content_type('application/json');
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            if (isset($_GET['id_contact'])) {
+                $id_contact = $_GET['id_contact'];
+
+                $contact = $this->MContact->getById($id_contact);
+
+                $id_city = $contact['id_city'];
+
+                $cart = $this->MCart->getByIdContact($contact['id_contact']);
 
                 $produks = $this->MProduk->getByIdCity($id_city);
 
                 $arrayData = array();
-
                 foreach ($produks as $produk) {
-                    $id_produk = $produk['id_produk'];
+                    $cartDetail = $this->MCartDetail->getByIdCartAndIdProduct($cart['id_cart'], $produk['id_produk']);
 
-                    $stokIn = $this->MStok->getStokIn($id_produk);
-                    $stokOut = $this->MStok->getStokOut($id_produk);
+                    if ($cartDetail) {
+                        $produk['cart'] = $cartDetail;
+                    } else {
+                        $produk['cart'] = array();
+                    }
 
-                    $stok = $stokIn['jml_stok'] - $stokOut['jml_stok'];
-                    $produk['stok'] = $stok;
-
-                    $arrayData[] = $produk;
+                    array_push($arrayData, $produk);
                 }
 
                 if ($produks == null) {
@@ -54,48 +60,19 @@ class Produk extends CI_Controller
                         'code' => 200,
                         'status' => 'ok',
                         'msg' => 'Sukses mengambil data produk',
-                        'data' => $arrayData,
+                        'data' => $produks,
                     ];
 
                     $this->output->set_output(json_encode($result));
                 }
             } else {
-                $this->output->set_content_type('application/json');
+                $result = [
+                    'code' => 400,
+                    'status' => 'failed',
+                    'msg' => 'id_contact is required',
+                ];
 
-                $produks = $this->MProduk->get();
-
-                $arrayData = array();
-
-                foreach ($produks as $produk) {
-                    $id_produk = $produk['id_produk'];
-
-                    $stokIn = $this->MStok->getStokIn($id_produk);
-                    $stokOut = $this->MStok->getStokOut($id_produk);
-
-                    $stok = $stokIn['jml_stok'] - $stokOut['jml_stok'];
-                    $produk['stok'] = $stok;
-
-                    $arrayData[] = $produk;
-                }
-
-                if ($produks == null) {
-                    $result = [
-                        'code' => 400,
-                        'status' => 'failed',
-                        'msg' => 'Tidak ada data'
-                    ];
-
-                    $this->output->set_output(json_encode($result));
-                } else {
-                    $result = [
-                        'code' => 200,
-                        'status' => 'ok',
-                        'msg' => 'Sukses mengambil data produk',
-                        'data' => $arrayData,
-                    ];
-
-                    $this->output->set_output(json_encode($result));
-                }
+                $this->output->set_output(json_encode($result));
             }
         } else {
             $result = [
