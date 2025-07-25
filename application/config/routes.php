@@ -80,3 +80,4 @@ $route['api/cart'] = 'Cart/get';
 // Cart Detail
 $route['api/cart/insert'] = 'CartDetail/create';
 $route['api/cart/delete'] = 'CartDetail/delete';
+$route['api/cart/checkout'] = 'Cart/checkout';
