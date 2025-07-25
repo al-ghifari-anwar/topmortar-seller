@@ -19,4 +19,15 @@ class MCart extends CI_Model
             return false;
         }
     }
+
+    public function update($cartData, $id_cart)
+    {
+        $query = $this->db->update('tb_cart', $cartData, ['id_cart' => $id_cart]);
+
+        if ($query) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

@@ -164,6 +164,13 @@ class Cart extends CI_Controller
                     $saveApporderDetail = $this->MApporderDetail->create($apporderDetailData);
                 }
 
+                $cartData = [
+                    'status_cart' => 'completed',
+                    'udpated_at' => date('Y-m-d H:i:s'),
+                ];
+
+                $this->MCart->update($cartData, $id_cart);
+
                 if ($contact['reputation'] != 'good') {
                     $result = [
                         'code' => 200,
