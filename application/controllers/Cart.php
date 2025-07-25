@@ -166,8 +166,8 @@ class Cart extends CI_Controller
 
                 if ($contact['reputation'] != 'good') {
                     $result = [
-                        'code' => 400,
-                        'status' => 'failed',
+                        'code' => 200,
+                        'status' => 'ok',
                         'msg' => 'Pesanan diterima, menunggu konfirmasi'
                     ];
 
@@ -200,8 +200,8 @@ class Cart extends CI_Controller
 
                     if ($res['total'] < $minimumScore) {
                         $result = [
-                            'code' => 400,
-                            'status' => 'failed',
+                            'code' => 200,
+                            'status' => 'ok',
                             'msg' => 'Pesanan diterima, menunggu konfirmasi',
                             'data' => [
                                 'score' => $res
@@ -264,7 +264,7 @@ class Cart extends CI_Controller
             'ship_to_address' => $contact['address'],
             'ship_to_phone' => $contact['nomorhp'],
             'id_courier' => $id_courier,
-            'id_kendaraan' => 0,
+            'id_kendaraan' => 2,
             'is_finished' => 1,
             'is_cod' => 0,
         ];
@@ -355,7 +355,7 @@ class Cart extends CI_Controller
             if ($res['status'] == 'success') {
                 $result = [
                     'code' => 200,
-                    'status' => 'failed',
+                    'status' => 'ok',
                     'msg' => 'Order diterima'
                 ];
 
@@ -363,7 +363,7 @@ class Cart extends CI_Controller
             } else {
                 $result = [
                     'code' => 200,
-                    'status' => 'failed',
+                    'status' => 'ok',
                     'msg' => 'Order diterima, menunggu konfirmasi'
                 ];
 
@@ -372,7 +372,7 @@ class Cart extends CI_Controller
         } else {
             $result = [
                 'code' => 200,
-                'status' => 'failed',
+                'status' => 'ok',
                 'msg' => 'Order diterima, menunggu konfirmasi'
             ];
 
