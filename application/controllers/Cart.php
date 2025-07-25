@@ -211,13 +211,14 @@ class Cart extends CI_Controller
                         $this->output->set_output(json_encode($result));
                     } else {
 
-                        $result = [
-                            'code' => 400,
-                            'status' => 'failed',
-                            'msg' => 'Lolos ke SJ'
-                        ];
+                        $this->insertSJ($id_apporder, $id_contact);
+                        // $result = [
+                        //     'code' => 400,
+                        //     'status' => 'failed',
+                        //     'msg' => 'Lolos ke SJ'
+                        // ];
 
-                        $this->output->set_output(json_encode($result));
+                        // $this->output->set_output(json_encode($result));
                     }
                 }
             } else {
