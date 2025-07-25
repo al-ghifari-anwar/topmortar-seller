@@ -11,6 +11,7 @@ class MApporder extends CI_Model
 
     public function getByIdContact($id_contact)
     {
+        $this->db->order_by('created_at', 'DESC');
         $query = $this->db->get_where('tb_apporder', ['id_contact' => $id_contact])->result_array();
 
         return $query;
