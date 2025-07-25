@@ -173,7 +173,7 @@ class Cart extends CI_Controller
 
                     $this->output->set_output(json_encode($result));
                 } else {
-                    $minimumScore = 80;
+                    $minimumScore = 50;
                     // Get Score from API
                     // Get Score
                     $curl = curl_init();
