@@ -161,7 +161,7 @@ class Cart extends CI_Controller
                         'total_apporder_detail' => $cartDetail['qty_cart_detail'] * $cartDetail['harga_produk'],
                     ];
 
-                    $saveApporderDetail = $this->MApporderDetail->create($apporderData);
+                    $saveApporderDetail = $this->MApporderDetail->create($apporderDetailData);
                 }
 
                 if ($contact['reputation'] != 'good') {
