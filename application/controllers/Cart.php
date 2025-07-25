@@ -155,7 +155,7 @@ class Cart extends CI_Controller
                         'id_apporder' => $id_apporder,
                         'id_produk' => $cartDetail['id_produk'],
                         'img_produk' => '',
-                        'name_produk' => $cartDetail['name_produk'],
+                        'name_produk' => $cartDetail['nama_produk'],
                         'price_produk' => $cartDetail['harga_produk'],
                         'qty_apporder_detail' => $cartDetail['qty_cart_detail'],
                         'total_apporder_detail' => $cartDetail['qty_cart_detail'] * $cartDetail['harga_produk'],
