@@ -83,3 +83,5 @@ $route['api/cart/delete'] = 'CartDetail/delete';
 $route['api/cart/checkout'] = 'Cart/checkout';
 // Apporder (Pesanan)
 $route['api/apporder'] = 'Apporder/index';
+// Invoice
+$route['api/invoice'] = 'Invoice/index';
