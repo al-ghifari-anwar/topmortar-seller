@@ -60,7 +60,7 @@ class Produk extends CI_Controller
                         'code' => 200,
                         'status' => 'ok',
                         'msg' => 'Sukses mengambil data produk',
-                        'data' => $produks,
+                        'data' => $arrayData,
                     ];
 
                     $this->output->set_output(json_encode($result));
