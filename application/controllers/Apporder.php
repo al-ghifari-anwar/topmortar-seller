@@ -86,4 +86,55 @@ class Apporder extends CI_Controller
             $this->output->set_output(json_encode($result));
         }
     }
+
+    public function detail()
+    {
+        $this->output->set_content_type('application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            $id_apporder = $_GET['id_apporder'];
+
+            $apporder = $this->MApporder->getById($id_apporder);
+
+            // $appordersArray = array();
+
+            // foreach ($apporders as $apporder) {
+            //     $id_apporder = $apporder['id_apporder'];
+
+            $apporderDetails = $this->MApporderDetail->getByIdApporder($id_apporder);
+
+            $suratJalan = $this->MSuratJalan->getByIdApporder($id_apporder);
+
+            $status_apporder = 'DIPROSES';
+
+            if ($suratJalan) {
+                if ($suratJalan['is_closing'] == 0) {
+                    $status_apporder = 'DIKIRIM';
+                } else {
+                    $status_apporder = 'SELESAI';
+                }
+            }
+
+            $apporder['status_apporder'] = $status_apporder;
+            $apporder['total_qty'] = count($apporderDetails) . "";
+            $apporder['items'] = $apporderDetails;
+
+            $result = [
+                'code' => 200,
+                'status' => 'ok',
+                'msg' => 'Success',
+                'data' => $apporder
+            ];
+
+            $this->output->set_output(json_encode($result));
+        } else {
+            $result = [
+                'code' => 400,
+                'status' => 'failed',
+                'msg' => 'Not found',
+            ];
+
+            $this->output->set_output(json_encode($result));
+        }
+    }
 }
