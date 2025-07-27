@@ -73,4 +73,48 @@ class Invoice extends CI_Controller
             $this->output->set_output(json_encode($result));
         }
     }
+
+    public function detail()
+    {
+        $this->output->set_content_type('application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            $id_invoice = $_GET['id_invoice'];
+
+            $invoice = $this->MInvoice->getById($id_invoice);
+
+            if ($invoice) {
+                $invoiceArrayData = array();
+
+                $detailSuratJalans = $this->MDetailSuratJalan->getByIdSuratJalan($invoice['id_surat_jalan']);
+
+                $invoice['item'] = $detailSuratJalans;
+
+                $result = [
+                    'code' => 200,
+                    'status' => 'ok',
+                    'msg' => 'Success',
+                    'data' => $invoice
+                ];
+
+                $this->output->set_output(json_encode($result));
+            } else {
+                $result = [
+                    'code' => 400,
+                    'status' => 'failed',
+                    'msg' => 'Not found',
+                ];
+
+                $this->output->set_output(json_encode($result));
+            }
+        } else {
+            $result = [
+                'code' => 400,
+                'status' => 'failed',
+                'msg' => 'Not found',
+            ];
+
+            $this->output->set_output(json_encode($result));
+        }
+    }
 }

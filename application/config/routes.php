@@ -86,3 +86,4 @@ $route['api/apporder'] = 'Apporder/index';
 $route['api/apporder/detail'] = 'Apporder/detail';
 // Invoice
 $route['api/invoice'] = 'Invoice/index';
+$route['api/invoice/detail'] = 'Invoice/detail';
