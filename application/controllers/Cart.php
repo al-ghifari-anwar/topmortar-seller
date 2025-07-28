@@ -86,8 +86,8 @@ class Cart extends CI_Controller
 
                     $cart['subtotal_price'] = $subtotal_price . "";
                     $cart['discount_app'] = $discount_app . "";
-                    $cart['total_dicount_app'] = $discount_app * $cartDetail['qty_cart_detail'];
-                    $cart['total_price'] = $subtotal_price - ($discount_app * $cartDetail['qty_cart_detail']);
+                    $cart['total_dicount_app'] = $discount_app * $cartDetail['qty_cart_detail'] . "";
+                    $cart['total_price'] = $subtotal_price - ($discount_app * $cartDetail['qty_cart_detail'] . "");
                     $cart['details'] = $cartDetails;
                 } else {
                     $cart['subtotal_price'] = $subtotal_price . "";
