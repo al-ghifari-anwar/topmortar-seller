@@ -41,7 +41,10 @@ class Invoice extends CI_Controller
 
                     $detailSuratJalans = $this->MDetailSuratJalan->getByIdSuratJalan($invoice['id_surat_jalan']);
 
-                    $invoice['item'] = $detailSuratJalans;
+                    $detailLimitSuratJalans = $this->MDetailSuratJalan->getByIdSuratJalanLimit($invoice['id_surat_jalan']);
+
+                    $invoice['total_qty'] = count($detailSuratJalans) . "";
+                    $invoice['item'] = $detailLimitSuratJalans;
 
                     array_push($invoiceArrayData, $invoice);
                 }
