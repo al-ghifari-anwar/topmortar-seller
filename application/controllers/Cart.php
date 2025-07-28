@@ -12,6 +12,7 @@ class Cart extends CI_Controller
         $this->load->model('MApporderDetail');
         $this->load->model('MSuratJalan');
         $this->load->model('MDetailSuratJalan');
+        $this->load->model('MDiscountApp');
     }
 
     public function get()
@@ -76,8 +77,10 @@ class Cart extends CI_Controller
 
                 $cartDetails = $this->MCartDetail->getByIdCart($cart['id_cart']);
 
+                $dicountApp = $this->MDiscountApp->get();
+                $discount_app = $dicountApp['amount_discount_app'];
+
                 $subtotal_price = 0;
-                $discount_app = 500;
 
                 if ($cartDetails) {
                     foreach ($cartDetails as $cartDetail) {
@@ -127,7 +130,8 @@ class Cart extends CI_Controller
             $id_contact = $post['id_contact'];
             $id_cart = $post['id_cart'];
 
-            $discount_app = 500;
+            $dicountApp = $this->MDiscountApp->get();
+            $discount_app = $dicountApp['amount_discount_app'];
 
             $contact = $this->MContact->getById($id_contact);
 
@@ -223,13 +227,6 @@ class Cart extends CI_Controller
                     } else {
 
                         $this->insertSJ($id_apporder, $id_contact);
-                        // $result = [
-                        //     'code' => 400,
-                        //     'status' => 'failed',
-                        //     'msg' => 'Lolos ke SJ'
-                        // ];
-
-                        // $this->output->set_output(json_encode($result));
                     }
                 }
             } else {
