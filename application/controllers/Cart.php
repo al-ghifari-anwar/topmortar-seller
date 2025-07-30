@@ -77,8 +77,8 @@ class Cart extends CI_Controller
 
                 $cartDetails = $this->MCartDetail->getByIdCart($cart['id_cart']);
 
-                $dicountApp = $this->MDiscountApp->get();
-                $discount_app = $dicountApp['amount_discount_app'];
+                $discountApp = $this->MDiscountApp->get();
+                $discount_app = $discountApp['amount_discount_app'];
 
                 $subtotal_price = 0;
 
@@ -89,13 +89,13 @@ class Cart extends CI_Controller
 
                     $cart['subtotal_price'] = $subtotal_price . "";
                     $cart['discount_app'] = $discount_app . "";
-                    $cart['total_dicount_app'] = $discount_app * $cartDetail['qty_cart_detail'] . "";
+                    $cart['total_discount_app'] = $discount_app * $cartDetail['qty_cart_detail'] . "";
                     $cart['total_price'] = $subtotal_price - ($discount_app * $cartDetail['qty_cart_detail']) . "";
                     $cart['details'] = $cartDetails;
                 } else {
                     $cart['subtotal_price'] = $subtotal_price . "";
                     $cart['discount_app'] = 0 . "";
-                    $cart['total_dicount_app'] = 0 . "";
+                    $cart['total_discount_app'] = 0 . "";
                     $cart['total_price'] = 0 . "";
                     $cart['details'] = $cartDetails;
                 }
@@ -130,8 +130,8 @@ class Cart extends CI_Controller
             $id_contact = $post['id_contact'];
             $id_cart = $post['id_cart'];
 
-            $dicountApp = $this->MDiscountApp->get();
-            $discount_app = $dicountApp['amount_discount_app'];
+            $discountApp = $this->MDiscountApp->get();
+            $discount_app = $discountApp['amount_discount_app'];
 
             $contact = $this->MContact->getById($id_contact);
 
