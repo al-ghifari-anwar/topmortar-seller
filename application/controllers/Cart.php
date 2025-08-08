@@ -13,6 +13,7 @@ class Cart extends CI_Controller
         $this->load->model('MSuratJalan');
         $this->load->model('MDetailSuratJalan');
         $this->load->model('MDiscountApp');
+        $this->load->model('MPromo');
     }
 
     public function get()
@@ -158,6 +159,8 @@ class Cart extends CI_Controller
             if ($saveApporder) {
                 $id_apporder = $this->db->insert_id();
 
+                $promo = $this->MPromo->getById($contact['id_promo']);
+
                 foreach ($cartDetails as $cartDetail) {
                     $apporderDetailData = [
                         'id_apporder' => $id_apporder,
@@ -170,6 +173,29 @@ class Cart extends CI_Controller
                     ];
 
                     $saveApporderDetail = $this->MApporderDetail->create($apporderDetailData);
+
+                    // Calculate Bonus
+                    $qty_apporder_detail = $cartDetail['qty_cart_detail'];
+                    $kelipatan_promo = $promo['kelipatan_promo'];
+
+                    $multiplier = $qty_apporder_detail / $kelipatan_promo;
+
+                    if (floor($multiplier) > 0) {
+                        if ($contact['id_distributor'] != '6') {
+                            $apporderBonusDetailData = [
+                                'id_apporder' => $id_apporder,
+                                'id_produk' => $cartDetail['id_produk'],
+                                'img_produk' => '',
+                                'name_produk' => $cartDetail['nama_produk'],
+                                'is_bonus' => 1,
+                                'price_produk' => $cartDetail['harga_produk'],
+                                'qty_apporder_detail' => $cartDetail['qty_cart_detail'],
+                                'total_apporder_detail' => 0,
+                            ];
+
+                            $saveApporderBonusDetail = $this->MApporderDetail->create($apporderBonusDetailData);
+                        }
+                    }
                 }
 
                 $cartData = [
@@ -290,8 +316,8 @@ class Cart extends CI_Controller
                     'id_produk' => $approderDetail['id_produk'],
                     'price' => $approderDetail['price_produk'],
                     'qty_produk' => $approderDetail['qty_apporder_detail'],
-                    'amount' => $approderDetail['total_apporder_detail'],
-                    'is_bonus' => 0,
+                    'amount' => $approderDetail['is_bonus'] == 0 ? $approderDetail['total_apporder_detail'] : 0,
+                    'is_bonus' => $approderDetail['is_bonus'],
                     'no_voucher' => '',
                 ];
 
