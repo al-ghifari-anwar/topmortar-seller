@@ -91,3 +91,7 @@ $route['api/invoice/pay'] = 'Invoice/pay';
 // Point
 $route['api/point/total'] = 'Point/getTotal';
 $route['api/point'] = 'Point/get';
+// Payment
+$route['api/payment/invoice'] = 'Payment/invoice';
+$route['api/payment/invoice/total'] = 'Payment/totalInvoice';
+$route['api/payment'] = 'Payment/history';

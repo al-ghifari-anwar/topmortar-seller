@@ -95,6 +95,13 @@ class Invoice extends CI_Controller
 
                 $invoice['item'] = $detailSuratJalans;
 
+                $payments = $this->MPayment->getPaymentByIdInvoice($invoice['id_invoice']);
+                $totalPaid = $this->MPayment->getTotalPaymentByIdInvoice($invoice['id_invoice']);
+
+                $invoice['totalPayment'] = $totalPaid['amount_payment'];
+                $invoice['sisaInvoice'] = $invoice['total_invoice'] - $totalPaid['amount_payment'] . "";
+                $invoice['payment'] = $payments;
+
                 $result = [
                     'code' => 200,
                     'status' => 'ok',
