@@ -42,7 +42,7 @@ class Cart extends CI_Controller
                         'msg' => 'Failed creating cart data'
                     ];
 
-                    $this->output->set_output(json_encode($result));
+                    return $this->output->set_output(json_encode($result));
                 } else {
 
                     $cart = $this->MCart->getByIdContact($id_contact);
@@ -71,7 +71,7 @@ class Cart extends CI_Controller
                         'data' => $cart,
                     ];
 
-                    $this->output->set_output(json_encode($result));
+                    return $this->output->set_output(json_encode($result));
                 }
             } else {
                 $cart = $this->MCart->getByIdContact($id_contact);
@@ -110,7 +110,7 @@ class Cart extends CI_Controller
                     'data' => $cart,
                 ];
 
-                $this->output->set_output(json_encode($result));
+                return $this->output->set_output(json_encode($result));
             }
         } else {
             $result = [
@@ -119,7 +119,7 @@ class Cart extends CI_Controller
                 'msg' => 'Not Found'
             ];
 
-            $this->output->set_output(json_encode($result));
+            return $this->output->set_output(json_encode($result));
         }
     }
 
@@ -216,7 +216,7 @@ class Cart extends CI_Controller
                         'msg' => 'Pesanan diterima, menunggu konfirmasi'
                     ];
 
-                    $this->output->set_output(json_encode($result));
+                    return $this->output->set_output(json_encode($result));
                 } else {
                     $minimumScore = 50;
                     // Get Score from API
@@ -253,7 +253,7 @@ class Cart extends CI_Controller
                             ]
                         ];
 
-                        $this->output->set_output(json_encode($result));
+                        return $this->output->set_output(json_encode($result));
                     } else {
 
                         $this->insertSJ($id_apporder, $id_contact);
@@ -266,7 +266,7 @@ class Cart extends CI_Controller
                     'msg' => 'Terjadi kesalahan'
                 ];
 
-                $this->output->set_output(json_encode($result));
+                return $this->output->set_output(json_encode($result));
             }
         } else {
             $result = [
@@ -275,7 +275,7 @@ class Cart extends CI_Controller
                 'msg' => 'Not Found'
             ];
 
-            $this->output->set_output(json_encode($result));
+            return $this->output->set_output(json_encode($result));
         }
     }
 
@@ -397,7 +397,7 @@ class Cart extends CI_Controller
                     'msg' => 'Order diterima'
                 ];
 
-                $this->output->set_output(json_encode($result));
+                return $this->output->set_output(json_encode($result));
             } else {
                 $result = [
                     'code' => 200,
@@ -405,7 +405,7 @@ class Cart extends CI_Controller
                     'msg' => 'Order diterima, menunggu konfirmasi'
                 ];
 
-                $this->output->set_output(json_encode($result));
+                return $this->output->set_output(json_encode($result));
             }
         } else {
             $result = [
@@ -414,7 +414,7 @@ class Cart extends CI_Controller
                 'msg' => 'Order diterima, menunggu konfirmasi'
             ];
 
-            $this->output->set_output(json_encode($result));
+            return $this->output->set_output(json_encode($result));
         }
     }
 }

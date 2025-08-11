@@ -61,7 +61,7 @@ class Apporder extends CI_Controller
                     'data' => $appordersArray
                 ];
 
-                $this->output->set_output(json_encode($result));
+                return $this->output->set_output(json_encode($result));
             } else {
                 $appordersArrayFilter = array_filter($appordersArray, function ($item) use ($status_filter) {
                     return $item['status_apporder'] === $status_filter;
@@ -74,7 +74,7 @@ class Apporder extends CI_Controller
                     'data' => array_values($appordersArrayFilter)
                 ];
 
-                $this->output->set_output(json_encode($result));
+                return $this->output->set_output(json_encode($result));
             }
         } else {
             $result = [
@@ -83,7 +83,7 @@ class Apporder extends CI_Controller
                 'msg' => 'Not found',
             ];
 
-            $this->output->set_output(json_encode($result));
+            return $this->output->set_output(json_encode($result));
         }
     }
 
@@ -126,7 +126,7 @@ class Apporder extends CI_Controller
                 'data' => $apporder
             ];
 
-            $this->output->set_output(json_encode($result));
+            return $this->output->set_output(json_encode($result));
         } else {
             $result = [
                 'code' => 400,
@@ -134,7 +134,7 @@ class Apporder extends CI_Controller
                 'msg' => 'Not found',
             ];
 
-            $this->output->set_output(json_encode($result));
+            return $this->output->set_output(json_encode($result));
         }
     }
 }

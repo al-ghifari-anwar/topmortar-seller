@@ -51,4 +51,15 @@ class MInvoice extends CI_Model
 
         return $query;
     }
+
+    public function update($id_invoice, $invoiceData)
+    {
+        $query = $this->db->update('tb_invoice', $invoiceData, ['id_invoice' => $id_invoice]);
+
+        if ($query) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

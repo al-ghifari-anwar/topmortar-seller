@@ -12,8 +12,19 @@ class MPoint extends CI_Model
 
     public function getPointByIdContact($id_contact)
     {
-        $query = $this->db->get_where('tb_point', ['id_contact' => $id_contact]);
+        $query = $this->db->get_where('tb_point', ['id_contact' => $id_contact])->result_array();
 
         return $query;
+    }
+
+    public function create($pointData)
+    {
+        $query = $this->db->insert('tb_point', $pointData);
+
+        if ($query) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
