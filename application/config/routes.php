@@ -88,6 +88,8 @@ $route['api/apporder/detail'] = 'Apporder/detail';
 $route['api/invoice'] = 'Invoice/index';
 $route['api/invoice/detail'] = 'Invoice/detail';
 $route['api/invoice/pay'] = 'Invoice/pay';
+// QRIS
+$route['api/qris/request'] = 'Qris/requestPayment';
 // Point
 $route['api/point/total'] = 'Point/getTotal';
 $route['api/point'] = 'Point/get';
