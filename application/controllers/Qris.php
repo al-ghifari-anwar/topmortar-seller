@@ -28,7 +28,7 @@ class Qris extends CI_Controller
 
             if ($getUnpaidQris) {
                 // $max_date_qris_payment = date('Y-m-d H:i:s', strtotime("+30 minutes", strtotime($getUnpaidQris['date_qris_payment'])));
-                $getUnpaidQris['img_qris_payment'] = FCPATH . "/assets/img/qris_img/" . $getUnpaidQris['img_qris_payment'];
+                $getUnpaidQris['img_qris_payment'] = base_url("/assets/img/qris_img/") . $getUnpaidQris['img_qris_payment'];
 
                 $result = [
                     'code' => 400,
