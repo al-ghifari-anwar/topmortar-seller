@@ -9,6 +9,7 @@ class Qris extends CI_Controller
     {
         parent::__construct();
         $this->load->model('MQrisPayment');
+        $this->load->model('MInvoice');
     }
 
     public function requestPayment()
@@ -21,10 +22,14 @@ class Qris extends CI_Controller
             $id_invoice = $post['id_invoice'];
             $amount_payment = $post['amount_payment'];
 
+            $invoice = $this->MInvoice->getById($id_invoice);
+
             $getUnpaidQris = $this->MQrisPayment->getUnpaidByIdInvoice($id_invoice);
 
             if ($getUnpaidQris) {
                 // $max_date_qris_payment = date('Y-m-d H:i:s', strtotime("+30 minutes", strtotime($getUnpaidQris['date_qris_payment'])));
+                $getUnpaidQris['img_qris_payment'] = FCPATH . "/assets/img/qris_img/" . $getUnpaidQris['img_qris_payment'];
+
                 $result = [
                     'code' => 400,
                     'status' => 'failed',
@@ -87,7 +92,7 @@ class Qris extends CI_Controller
                     $writerResult->saveToFile($qrisFilePath);
 
                     $qrisPaymentData = [
-                        'id_apporder' => 0,
+                        'id_apporder' => $invoice['id_apporder'],
                         'id_invoice' => $id_invoice,
                         'amount_qris_payment' => $amount_payment,
                         'img_qris_payment' => $qrisFileName,
@@ -117,6 +122,74 @@ class Qris extends CI_Controller
                             'code' => 200,
                             'status' => 'ok',
                             'msg' => 'QRIS berhasil dibuat',
+                            'data' => $qrisPayment,
+                        ];
+
+                        return $this->output->set_output(json_encode($result));
+                    }
+                }
+            }
+        } else {
+            $result = [
+                'code' => 400,
+                'status' => 'failed',
+                'msg' => 'Not found',
+            ];
+
+            return $this->output->set_output(json_encode($result));
+        }
+    }
+
+    public function getQrisPayment($id_qris_payment)
+    {
+        $this->output->set_content_type('application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            $qrisPayment = $this->MQrisPayment->getById($id_qris_payment);
+
+            if (!$qrisPayment) {
+                $result = [
+                    'code' => 400,
+                    'status' => 'ok',
+                    'msg' => 'Tidak ada pembayaran',
+                    'data' => $qrisPayment,
+                ];
+
+                return $this->output->set_output(json_encode($result));
+            } else {
+                if ($qrisPayment['status_qris_payment'] == 'paid') {
+                    $result = [
+                        'code' => 200,
+                        'status' => 'ok',
+                        'msg' => 'Pembayaran sukses',
+                        'data' => $qrisPayment,
+                    ];
+
+                    return $this->output->set_output(json_encode($result));
+                } else {
+                    $id_qris_payment = $qrisPayment['id_qris_payment'];
+
+                    $max_date_qris_payment = date('Y-m-d H:i:s', strtotime("+30 minutes", strtotime($qrisPayment['date_qris_payment'])));
+
+                    if (date("Y-m-d H:i:s") >= $max_date_qris_payment) {
+                        $qrisPaymentData = [
+                            'status_qris_payment' => 'expired',
+                        ];
+
+                        $this->MQrisPayment->update($id_qris_payment, $qrisPaymentData);
+
+                        $result = [
+                            'code' => 400,
+                            'status' => 'failed',
+                            'msg' => 'QRIS Expired, silahkan ulangi pembayaran',
+                        ];
+
+                        return $this->output->set_output(json_encode($result));
+                    } else {
+                        $result = [
+                            'code' => 200,
+                            'status' => 'ok',
+                            'msg' => 'QRIS sudah siap',
                             'data' => $qrisPayment,
                         ];
 
