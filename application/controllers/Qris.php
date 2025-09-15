@@ -257,4 +257,72 @@ class Qris extends CI_Controller
             return $this->output->set_output(json_encode($result));
         }
     }
+
+    public function checkStatus()
+    {
+        $this->output->set_content_type('application/json');
+
+        $qrisPayments = $this->MQrisPayment->getUnpaid();
+
+        foreach ($qrisPayments as $qrisPayment) {
+            $inv_qris_payment = $qrisPayment['inv_qris_payment'];
+            $date_qris_payment = date("Y-m-d", strtotime($qrisPayment['date_qris_payment']));
+            $amount_qris_payment = $qrisPayment['amount_qris_payment'];
+
+            $apiKey = '139139250813480';
+            $mID = '126301287';
+            // Check Status QRIS
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://qris.interactive.co.id/restapi/qris/checkpaid_qris.php?do=checkStatus&apikey=' . $apiKey . '&mID=' . $mID . '&invid=' . $inv_qris_payment . '&trxvalue=' . $amount_qris_payment . '&trxdate=' . $date_qris_payment,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Cookie: TiPMix=89.41549226921767; x-ms-routing-name=self'
+                ),
+            ));
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+
+            $resStatus = json_decode($response, true);
+
+            if ($resStatus['status'] == 'success') {
+                $statusData = $resStatus['data'];
+
+                if ($statusData['qris_status'] == 'paid') {
+                    $qris_status = $statusData['qris_status'];
+                    $qris_customer = $statusData['qris_payment_customer_name'];
+                    $qris_method = $statusData['qris_payment_methodby'];
+                    $qris_paid_date = $statusData['qris_paid_date'];
+                    $qris_version = $resStatus['qris_api_version_code'];
+
+                    $qrisPaymentData = [
+                        'status_qris_payment' => 'paid',
+                        'paid_at' => $qris_paid_date,
+                        'customer_qris_payment' => $qris_customer,
+                        'method_qris_payment' => $qris_method,
+                        'version_qris_payment' => $qris_version,
+                    ];
+
+                    $this->MQrisPayment->update($qrisPayment['id_qris_payment'], $qrisPaymentData);
+                }
+            }
+        }
+
+        $result = [
+            'code' => 200,
+            'status' => 'ok',
+            'msg' => 'Check Status Done',
+        ];
+
+        return $this->output->set_output(json_encode($result));
+    }
 }

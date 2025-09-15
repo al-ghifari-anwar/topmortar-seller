@@ -92,6 +92,7 @@ $route['api/invoice/pay'] = 'Invoice/pay';
 $route['api/qris/check'] = 'Qris/checkPayment';
 $route['api/qris/request'] = 'Qris/requestPayment';
 $route['api/qris/payment'] = 'Qris/getQrisPayment';
+$route['api/qris/status'] = 'Qris/checkStatus';
 // Point
 $route['api/point/total'] = 'Point/getTotal';
 $route['api/point'] = 'Point/get';

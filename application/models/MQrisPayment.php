@@ -25,6 +25,13 @@ class MQrisPayment extends CI_Model
         }
     }
 
+    public function getUnpaid()
+    {
+        $query = $this->db->get_where('tb_qris_payment', ['status_qris_payment' => 'unpaid'])->result_array();
+
+        return $query;
+    }
+
     public function getUnpaidByIdInvoice($id_invoice)
     {
         $query = $this->db->get_where('tb_qris_payment', ['id_invoice' => $id_invoice, 'status_qris_payment' => 'unpaid'])->row_array();
