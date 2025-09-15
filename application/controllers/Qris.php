@@ -194,7 +194,7 @@ class Qris extends CI_Controller
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $post = json_decode(file_get_contents('php://input'), true) != null ? json_decode(file_get_contents('php://input'), true) : $this->input->post();
 
-            $id_qris_payment = $post['qris_payment'];
+            $id_qris_payment = $post['id_qris_payment'];
 
             $qrisPayment = $this->MQrisPayment->getById($id_qris_payment);
 
