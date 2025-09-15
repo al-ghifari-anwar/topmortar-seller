@@ -312,7 +312,15 @@ class Qris extends CI_Controller
                         'version_qris_payment' => $qris_version,
                     ];
 
-                    $this->MQrisPayment->update($qrisPayment['id_qris_payment'], $qrisPaymentData);
+                    $save = $this->MQrisPayment->update($qrisPayment['id_qris_payment'], $qrisPaymentData);
+
+                    if ($save) {
+                        $id_invoice = $qrisPayment['id_invoice'];
+
+                        $remark_payment = 'QRIS#' . $inv_qris_payment . ' - ' . $qris_customer . '/' . $qris_method;
+
+                        $this->insertPayment($qrisPayment['id_qris_payment'], $id_invoice, $amount_qris_payment, $remark_payment, $qris_paid_date);
+                    }
                 }
             }
         }
@@ -324,5 +332,114 @@ class Qris extends CI_Controller
         ];
 
         return $this->output->set_output(json_encode($result));
+    }
+
+    public function insertPayment($id_qris_payment, $id_invoice, $amount_payment, $remark_payment, $date_payment)
+    {
+        $invoice = $this->MInvoice->getById($id_invoice);
+
+        $invoiceTotalPayment = $this->MPayment->getTotalPaymentByIdInvoice($id_invoice);
+
+        $totalPaid = $invoiceTotalPayment['amount_payment'] == null ? 0 : $invoiceTotalPayment['amount_payment'];
+
+        $sisaInvoice = $invoice['total_invoice'] - $totalPaid;
+
+        $totalItem = $this->MDetailSuratJalan->getTotalQtyByIdSuratJalan($invoice['id_surat_jalan']);
+
+        $paymentData = [
+            'id_qris_payment' => $id_qris_payment,
+            'amount_payment' => $amount_payment,
+            'id_invoice' => $id_invoice,
+            'date_payment' => $date_payment,
+            'remark_payment' => $remark_payment,
+            'id_invoice' => $id_invoice,
+            'source' => '8880762231',
+        ];
+
+        $savePayment = $this->MPayment->create($paymentData);
+
+        if (!$savePayment) {
+            $result = [
+                'code' => 400,
+                'status' => 'failed',
+                'msg' => 'Gagal payment',
+            ];
+
+            return $this->output->set_output(json_encode($result));
+        } else {
+            if ($amount_payment < $invoice['total_invoice']) {
+                if ($amount_payment < $sisaInvoice) {
+                    $result = [
+                        'code' => 200,
+                        'status' => 'ok',
+                        'msg' => 'Pembayaran berhasil',
+                    ];
+
+                    return $this->output->set_output(json_encode($result));
+                } else {
+                    $invoiceData = [
+                        'status_invoice' => 'paid'
+                    ];
+
+                    $saveInvoice = $this->MInvoice->update($id_invoice, $invoiceData);
+
+                    if ($totalItem['qty_produk'] >= 100) {
+                        $this->setQtyPoint($invoice['id_contact'], $id_invoice);
+                    }
+
+                    $result = [
+                        'code' => 200,
+                        'status' => 'ok',
+                        'msg' => 'Pembayaran berhasil',
+                    ];
+
+                    return $this->output->set_output(json_encode($result));
+                }
+            } else {
+                $invoiceData = [
+                    'status_invoice' => 'paid'
+                ];
+
+                $saveInvoice = $this->MInvoice->update($id_invoice, $invoiceData);
+
+                $this->setPaymentPoint($invoice['id_contact'], $id_invoice);
+
+                if ($totalItem['qty_produk'] >= 100) {
+                    $this->setQtyPoint($invoice['id_contact'], $id_invoice);
+                }
+
+                $result = [
+                    'code' => 200,
+                    'status' => 'ok',
+                    'msg' => 'Pembayaran berhasil',
+                ];
+
+                return $this->output->set_output(json_encode($result));
+            }
+        }
+    }
+
+    public function setPaymentPoint($id_contact, $id_invoice)
+    {
+        $pointData = [
+            'id_contact' => $id_contact,
+            'id_invoice' => $id_invoice,
+            'source_point' => 'Full Payment',
+            'val_point' => 3,
+        ];
+
+        $save = $this->MPoint->create($pointData);
+    }
+
+    public function setQtyPoint($id_contact, $id_invoice)
+    {
+        $pointData = [
+            'id_contact' => $id_contact,
+            'id_invoice' => $id_invoice,
+            'source_point' => 'Full Payment',
+            'val_point' => 3,
+        ];
+
+        $save = $this->MPoint->create($pointData);
     }
 }
