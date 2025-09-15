@@ -10,6 +10,9 @@ class Qris extends CI_Controller
         parent::__construct();
         $this->load->model('MQrisPayment');
         $this->load->model('MInvoice');
+        $this->load->model('MPayment');
+        $this->load->model('MPoint');
+        $this->load->model('MDetailSuratJalan');
     }
 
     public function checkPayment()
