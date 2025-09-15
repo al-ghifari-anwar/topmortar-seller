@@ -12,6 +12,48 @@ class Qris extends CI_Controller
         $this->load->model('MInvoice');
     }
 
+    public function checkPayment()
+    {
+        $this->output->set_content_type('application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $post = json_decode(file_get_contents('php://input'), true) != null ? json_decode(file_get_contents('php://input'), true) : $this->input->post();
+
+            $id_invoice = $post['id_invoice'];
+
+            $qrisPayment = $this->MQrisPayment->getUnpaidByIdInvoice($id_invoice);
+
+            if ($qrisPayment) {
+                $qrisPayment['img_qris_payment'] = base_url("/assets/img/qris_img/") . $qrisPayment['img_qris_payment'];
+
+                $result = [
+                    'code' => 200,
+                    'status' => 'ok',
+                    'msg' => 'Payment ongoing',
+                    'data' => $qrisPayment,
+                ];
+
+                return $this->output->set_output(json_encode($result));
+            } else {
+                $result = [
+                    'code' => 400,
+                    'status' => 'failed',
+                    'msg' => 'No payment found, proceed to create',
+                ];
+
+                return $this->output->set_output(json_encode($result));
+            }
+        } else {
+            $result = [
+                'code' => 400,
+                'status' => 'failed',
+                'msg' => 'Not found',
+            ];
+
+            return $this->output->set_output(json_encode($result));
+        }
+    }
+
     public function requestPayment()
     {
         $this->output->set_content_type('application/json');
@@ -118,6 +160,8 @@ class Qris extends CI_Controller
 
                         $qrisPayment = $this->MQrisPayment->getById($id_qris_payment);
 
+                        $qrisPayment['img_qris_payment'] = base_url("/assets/img/qris_img/") . $qrisPayment['img_qris_payment'];
+
                         $result = [
                             'code' => 200,
                             'status' => 'ok',
@@ -140,11 +184,15 @@ class Qris extends CI_Controller
         }
     }
 
-    public function getQrisPayment($id_qris_payment)
+    public function getQrisPayment()
     {
         $this->output->set_content_type('application/json');
 
-        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $post = json_decode(file_get_contents('php://input'), true) != null ? json_decode(file_get_contents('php://input'), true) : $this->input->post();
+
+            $id_qris_payment = $post['qris_payment'];
+
             $qrisPayment = $this->MQrisPayment->getById($id_qris_payment);
 
             if (!$qrisPayment) {
@@ -152,14 +200,16 @@ class Qris extends CI_Controller
                     'code' => 400,
                     'status' => 'ok',
                     'msg' => 'Tidak ada pembayaran',
-                    'data' => $qrisPayment,
+                    'data' => [],
                 ];
 
                 return $this->output->set_output(json_encode($result));
             } else {
+                $qrisPayment['img_qris_payment'] = base_url("/assets/img/qris_img/") . $qrisPayment['img_qris_payment'];
+
                 if ($qrisPayment['status_qris_payment'] == 'paid') {
                     $result = [
-                        'code' => 200,
+                        'code' => 401,
                         'status' => 'ok',
                         'msg' => 'Pembayaran sukses',
                         'data' => $qrisPayment,
