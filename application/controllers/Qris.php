@@ -299,7 +299,7 @@ class Qris extends CI_Controller
 
                 if ($statusData['qris_status'] == 'paid') {
                     $qris_status = $statusData['qris_status'];
-                    $qris_customer = $statusData['qris_payment_customer_name'];
+                    $qris_customer = $statusData['qris_payment_customername'];
                     $qris_method = $statusData['qris_payment_methodby'];
                     $qris_paid_date = $statusData['qris_paid_date'];
                     $qris_version = $resStatus['qris_api_version_code'];
