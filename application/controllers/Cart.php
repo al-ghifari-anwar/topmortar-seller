@@ -15,6 +15,7 @@ class Cart extends CI_Controller
         $this->load->model('MDiscountApp');
         $this->load->model('MPromo');
         $this->load->model('MUser');
+        $this->load->model('MSettingTopseller');
     }
 
     public function get()
@@ -131,6 +132,8 @@ class Cart extends CI_Controller
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $post = json_decode(file_get_contents('php://input'), true) != null ? json_decode(file_get_contents('php://input'), true) : $this->input->post();
 
+            $settingTopseller = $this->MSettingTopseller->get();
+
             $id_contact = $post['id_contact'];
             $id_cart = $post['id_cart'];
 
@@ -219,7 +222,7 @@ class Cart extends CI_Controller
 
                     return $this->output->set_output(json_encode($result));
                 } else {
-                    $minimumScore = 50;
+                    $minimumScore = $settingTopseller['minimum_skor'];
                     // Get Score from API
                     // Get Score
                     $curl = curl_init();
