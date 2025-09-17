@@ -11,6 +11,7 @@ class Produk extends CI_Controller
         $this->load->model('MProduk');
         $this->load->model('MCartDetail');
         $this->load->model('MCart');
+        $this->load->model('MMasterProduk');
     }
 
     public function index()
@@ -36,7 +37,10 @@ class Produk extends CI_Controller
 
                 $arrayData = array();
                 foreach ($produks as $produk) {
+                    $masterProduk = $this->MMasterProduk->getById($produk['id_master_produk']);
                     $cartDetail = $this->MCartDetail->getByIdCartAndIdProduct($cart['id_cart'], $produk['id_produk']);
+
+                    $produk['img_produk'] = $masterProduk['img_master_produk'];
 
                     if ($cartDetail) {
                         $produk['cart'] = $cartDetail;
