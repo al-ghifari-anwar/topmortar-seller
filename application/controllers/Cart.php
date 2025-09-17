@@ -14,6 +14,7 @@ class Cart extends CI_Controller
         $this->load->model('MDetailSuratJalan');
         $this->load->model('MDiscountApp');
         $this->load->model('MPromo');
+        $this->load->model('MUser');
     }
 
     public function get()
@@ -290,7 +291,9 @@ class Cart extends CI_Controller
 
         $approderDetails = $this->MApporderDetail->getByIdApporder($apporder['id_apporder']);
 
-        $id_courier = 18;
+        $courier = $this->MUser->getCourierByIdCity($id_city);
+
+        $id_courier = $courier['id_user'];
 
         $suratJalanData = [
             'id_apporder' => $id_apporder,
