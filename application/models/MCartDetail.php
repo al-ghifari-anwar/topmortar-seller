@@ -5,6 +5,7 @@ class MCartDetail extends CI_Model
     public function getByIdCart($id_cart)
     {
         $this->db->join('tb_produk', 'tb_produk.id_produk = tb_cart_detail.id_produk');
+        $this->db->join('tb_master_produk', 'tb_produk.id_master_produk = tb_master_produk.id_master_produk');
         $this->db->join('tb_satuan', 'tb_satuan.id_satuan = tb_produk.id_satuan');
         $query = $this->db->get_where('tb_cart_detail', ['id_cart' => $id_cart])->result_array();
 
@@ -14,6 +15,7 @@ class MCartDetail extends CI_Model
     public function getByIdCartAndIdProduct($id_cart, $id_produk)
     {
         $this->db->join('tb_produk', 'tb_produk.id_produk = tb_cart_detail.id_produk');
+        $this->db->join('tb_master_produk', 'tb_produk.id_master_produk = tb_master_produk.id_master_produk');
         $this->db->join('tb_satuan', 'tb_satuan.id_satuan = tb_produk.id_satuan');
         $query = $this->db->get_where('tb_cart_detail', ['id_cart' => $id_cart, 'tb_cart_detail.id_produk' => $id_produk])->row_array();
 

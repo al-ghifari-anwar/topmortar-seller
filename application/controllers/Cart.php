@@ -16,6 +16,7 @@ class Cart extends CI_Controller
         $this->load->model('MPromo');
         $this->load->model('MUser');
         $this->load->model('MSettingTopseller');
+        $this->load->model('MMasterProduk');
     }
 
     public function get()

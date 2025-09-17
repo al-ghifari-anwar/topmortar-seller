@@ -100,3 +100,6 @@ $route['api/point'] = 'Point/get';
 $route['api/payment/invoice'] = 'Payment/invoice';
 $route['api/payment/invoice/total'] = 'Payment/totalInvoice';
 $route['api/payment'] = 'Payment/history';
+// Promo
+$route['api/promo'] = 'PromoTopseller/index';
+$route['api/promo/(:num)'] = 'PromoTopseller/detail/$1';
