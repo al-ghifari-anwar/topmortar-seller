@@ -17,6 +17,7 @@ class Cart extends CI_Controller
         $this->load->model('MUser');
         $this->load->model('MSettingTopseller');
         $this->load->model('MMasterProduk');
+        $this->load->model('HQontak');
     }
 
     public function get()
@@ -214,7 +215,31 @@ class Cart extends CI_Controller
 
                 $this->MCart->update($cartData, $id_cart);
 
+                $id_distributor = $contact['id_distributor'];
+
+                $template_id = '9241bf86-ae94-4aa8-8975-551409af90b9';
+
+                $from_name = 'Top Mortar';
+
+                $adminNumbers = [
+                    [
+                        'to_number' => '6281808152028',
+                        'to_name' => 'Pak Hartawan',
+                    ],
+                    [
+                        'to_number' => '6289636224827',
+                        'to_name' => 'April',
+                    ],
+                ];
+
                 if ($contact['reputation'] != 'good') {
+
+                    $message = 'Pesanan perlu konfirm. Toko: *' . $contact['nama'] . '*. Status: *' . $contact['store_status'] . '*. Reputasi: *' . $contact['reputation'] . '*.';
+
+                    foreach ($adminNumbers as $adminNumber) {
+                        $this->HQontak->sendNotifText($id_distributor, $adminNumber['to_number'], $adminNumber['to_name'], $template_id, $message, $from_name);
+                    }
+
                     $result = [
                         'code' => 200,
                         'status' => 'ok',
@@ -249,6 +274,13 @@ class Cart extends CI_Controller
                     $res = json_decode($response, true);
 
                     if ($res['total'] < $minimumScore) {
+
+                        $message = 'Pesanan perlu konfirm. Toko: *' . $contact['nama'] . '*. Status: *' . $contact['store_status'] . '*. Reputasi: *' . $contact['reputation'] . '*. Skor: *' . $minimumScore . '*.';
+
+                        foreach ($adminNumbers as $adminNumber) {
+                            $this->HQontak->sendNotifText($id_distributor, $adminNumber['to_number'], $adminNumber['to_name'], $template_id, $message, $from_name);
+                        }
+
                         $result = [
                             'code' => 200,
                             'status' => 'ok',
