@@ -109,6 +109,7 @@ class Invoice extends CI_Controller
                 }
 
                 $invoice['date_jatem'] = $dateJatem;
+                $invoice['date_max_cod'] = $dateMaxCod;
 
                 $invoice['item'] = $detailSuratJalans;
 
