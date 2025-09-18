@@ -115,7 +115,7 @@ class Invoice extends CI_Controller
                 $payments = $this->MPayment->getPaymentByIdInvoice($invoice['id_invoice']);
                 $totalPaid = $this->MPayment->getTotalPaymentByIdInvoice($invoice['id_invoice']);
 
-                $discountData = [];
+                $discountData = null;
 
                 if (date('Y-m-d') <= $dateMaxCod) {
                     $discountData = [
