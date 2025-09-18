@@ -360,7 +360,7 @@ class Cart extends CI_Controller
                     'price' => $approderDetail['price_produk'],
                     'qty_produk' => $approderDetail['qty_apporder_detail'],
                     'amount' => $approderDetail['is_bonus'] == 0 ? $approderDetail['total_apporder_detail'] : 0,
-                    'is_bonus' => $approderDetail['is_bonus'],
+                    'is_bonus' => $approderDetail['is_bonus'] == 0 ? 0 : 1,
                     'no_voucher' => '',
                 ];
 
