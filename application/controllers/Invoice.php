@@ -120,14 +120,14 @@ class Invoice extends CI_Controller
                 if (date('Y-m-d') <= $dateMaxCod) {
                     $discountData = [
                         'discount_name' => 'Potongan COD',
-                        'discount_value' => 2000 * $qty_not_free,
+                        'discount_value' => 2000 * $qty_not_free . "",
                     ];
                 }
 
                 if (date('Y-m-d') > $dateMaxCod && date('Y-m-d') <= $dateJatem) {
                     $discountData = [
                         'discount_name' => 'Potongan Tepat Waktu',
-                        'discount_value' => 1000 * $qty_not_free,
+                        'discount_value' => 1000 * $qty_not_free . "",
                     ];
                 }
 
