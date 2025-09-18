@@ -361,6 +361,7 @@ class Qris extends CI_Controller
 
         $discountData = [];
         $discountAmount = 0;
+        $discountName = null;
 
         if (date('Y-m-d') <= $dateMaxCod) {
             $discountData = [
@@ -368,6 +369,7 @@ class Qris extends CI_Controller
                 'discount_value' => 2000 * $qty_not_free . "",
             ];
             $discountAmount = 2000 * $qty_not_free;
+            $discountName = 'Potongan COD';
         }
 
         if (date('Y-m-d') > $dateMaxCod && date('Y-m-d') <= $dateJatem) {
@@ -377,6 +379,7 @@ class Qris extends CI_Controller
             ];
 
             $discountAmount = 1000 * $qty_not_free;
+            $discountName = 'Potongan Tepat Waktu';
         }
 
         $total_invoice = $invoice['total_invoice'] - $discountAmount;
@@ -422,9 +425,9 @@ class Qris extends CI_Controller
 
                     $saveInvoice = $this->MInvoice->update($id_invoice, $invoiceData);
 
-                    if ($totalItem['qty_produk'] >= 100) {
-                        $this->setQtyPoint($invoice['id_contact'], $id_invoice);
-                    }
+                    // if ($totalItem['qty_produk'] >= 100) {
+                    //     $this->setQtyPoint($invoice['id_contact'], $id_invoice);
+                    // }
 
                     $result = [
                         'code' => 200,
@@ -436,6 +439,9 @@ class Qris extends CI_Controller
                 }
             } else {
                 $invoiceData = [
+                    'discount_extra_name' => $discountName,
+                    'discount_extra_amount' => $discountAmount,
+                    'total_invoice' => $total_invoice,
                     'status_invoice' => 'paid'
                 ];
 
