@@ -136,7 +136,7 @@ class Invoice extends CI_Controller
                     }
                 }
 
-                $invoice['total_invoice'] = $invoice['total_invoice'] - $discountAmount;
+                $invoice['total_invoice'] = $invoice['total_invoice'] - $discountAmount . "";
                 $invoice['discount_extra'] = $discountData;
                 $invoice['totalPayment'] = $totalPaid['amount_payment'];
                 $invoice['sisaInvoice'] = $invoice['total_invoice'] - $totalPaid['amount_payment'] - $discountAmount . "";
