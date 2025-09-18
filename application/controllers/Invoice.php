@@ -116,24 +116,30 @@ class Invoice extends CI_Controller
                 $totalPaid = $this->MPayment->getTotalPaymentByIdInvoice($invoice['id_invoice']);
 
                 $discountData = null;
+                $discountAmount = 0;
 
-                if (date('Y-m-d') <= $dateMaxCod) {
-                    $discountData = [
-                        'discount_name' => 'Potongan COD',
-                        'discount_value' => 2000 * $qty_not_free . "",
-                    ];
+                if ($payments == null) {
+                    if (date('Y-m-d') <= $dateMaxCod) {
+                        $discountData = [
+                            'discount_name' => 'Potongan COD',
+                            'discount_value' => 2000 * $qty_not_free . "",
+                        ];
+                        $discountAmount = 2000 * $qty_not_free;
+                    }
+
+                    if (date('Y-m-d') > $dateMaxCod && date('Y-m-d') <= $dateJatem) {
+                        $discountData = [
+                            'discount_name' => 'Potongan Tepat Waktu',
+                            'discount_value' => 1000 * $qty_not_free . "",
+                        ];
+                        $discountAmount = 1000 * $qty_not_free;
+                    }
                 }
 
-                if (date('Y-m-d') > $dateMaxCod && date('Y-m-d') <= $dateJatem) {
-                    $discountData = [
-                        'discount_name' => 'Potongan Tepat Waktu',
-                        'discount_value' => 1000 * $qty_not_free . "",
-                    ];
-                }
-
+                $invoice['total_invoice'] = $invoice['total_invoice'] - $discountAmount;
                 $invoice['discount_extra'] = $discountData;
                 $invoice['totalPayment'] = $totalPaid['amount_payment'];
-                $invoice['sisaInvoice'] = $invoice['total_invoice'] - $totalPaid['amount_payment'] . "";
+                $invoice['sisaInvoice'] = $invoice['total_invoice'] - $totalPaid['amount_payment'] - $discountAmount . "";
                 $invoice['payment'] = $payments;
 
                 $result = [
