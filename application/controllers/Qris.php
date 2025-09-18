@@ -13,6 +13,7 @@ class Qris extends CI_Controller
         $this->load->model('MPayment');
         $this->load->model('MPoint');
         $this->load->model('MDetailSuratJalan');
+        $this->load->model('MContact');
     }
 
     public function checkPayment()
@@ -341,9 +342,44 @@ class Qris extends CI_Controller
     {
         $invoice = $this->MInvoice->getById($id_invoice);
 
+        $contact = $this->MContact->getById($invoice['id_contact']);
+
+        $dateMaxCod = date('Y-m-d', strtotime("+3 days", strtotime($invoice['date_invoice'])));
+
+        $dateJatem = date('Y-m-d', strtotime("+" . $contact['termin_payment'] . " days", strtotime($invoice['date_invoice'])));
+
         $invoiceTotalPayment = $this->MPayment->getTotalPaymentByIdInvoice($id_invoice);
 
         $totalPaid = $invoiceTotalPayment['amount_payment'] == null ? 0 : $invoiceTotalPayment['amount_payment'];
+
+        $detailNotFrees = $this->MDetailSuratJalan->getNotFreeByIdSurat_jalan($invoice['id_surat_jalan']);
+
+        $qty_not_free = 0;
+        foreach ($detailNotFrees as $detailNotFree) {
+            $qty_not_free += $detailNotFree['qty_produk'];
+        }
+
+        $discountData = [];
+        $discountAmount = 0;
+
+        if (date('Y-m-d') <= $dateMaxCod) {
+            $discountData = [
+                'discount_name' => 'Potongan COD',
+                'discount_value' => 2000 * $qty_not_free . "",
+            ];
+            $discountAmount = 2000 * $qty_not_free;
+        }
+
+        if (date('Y-m-d') > $dateMaxCod && date('Y-m-d') <= $dateJatem) {
+            $discountData = [
+                'discount_name' => 'Potongan Tepat Waktu',
+                'discount_value' => 1000 * $qty_not_free . "",
+            ];
+
+            $discountAmount = 1000 * $qty_not_free;
+        }
+
+        $total_invoice = $invoice['total_invoice'] - $discountAmount;
 
         $sisaInvoice = $invoice['total_invoice'] - $totalPaid;
 
@@ -370,7 +406,7 @@ class Qris extends CI_Controller
 
             return $this->output->set_output(json_encode($result));
         } else {
-            if ($amount_payment < $invoice['total_invoice']) {
+            if ($amount_payment < $total_invoice) {
                 if ($amount_payment < $sisaInvoice) {
                     $result = [
                         'code' => 200,
