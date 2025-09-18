@@ -89,15 +89,44 @@ class Invoice extends CI_Controller
             $invoice = $this->MInvoice->getById($id_invoice);
 
             if ($invoice) {
+                $id_contact = $invoice['id_contact'];
+
+                $contact = $this->MContact->getById($id_contact);
+
+                $dateMaxCod = date('Y-m-d', strtotime("+3 days", strtotime($invoice['date_invoice'])));
+
+                $dateJatem = date('Y-m-d', strtotime("+" . $contact['termin_payment'] . " days", strtotime($invoice['date_invoice'])));
+
                 $invoiceArrayData = array();
 
                 $detailSuratJalans = $this->MDetailSuratJalan->getByIdSuratJalan($invoice['id_surat_jalan']);
+
+                $detailNotFree = $this->MDetailSuratJalan->getNotFreeByIdSurat_jalan($invoice['id_surat_jalan']);
+
+                $invoice['date_jatem'] = $dateJatem;
 
                 $invoice['item'] = $detailSuratJalans;
 
                 $payments = $this->MPayment->getPaymentByIdInvoice($invoice['id_invoice']);
                 $totalPaid = $this->MPayment->getTotalPaymentByIdInvoice($invoice['id_invoice']);
 
+                $discountData = [];
+
+                if (date('Y-m-d') <= $dateMaxCod) {
+                    $discountData = [
+                        'discount_name' => 'Potongan COD',
+                        'discount_value' => 2000 * count($detailNotFree),
+                    ];
+                }
+
+                if (date('Y-m-d') > $dateMaxCod && date('Y-m-d') <= $dateJatem) {
+                    $discountData = [
+                        'discount_name' => 'Potongan Tepat Waktu',
+                        'discount_value' => 1000 * count($detailNotFree),
+                    ];
+                }
+
+                $invoice['discount_extra'] = $discountData;
                 $invoice['totalPayment'] = $totalPaid['amount_payment'];
                 $invoice['sisaInvoice'] = $invoice['total_invoice'] - $totalPaid['amount_payment'] . "";
                 $invoice['payment'] = $payments;
