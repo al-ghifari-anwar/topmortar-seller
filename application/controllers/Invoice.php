@@ -124,6 +124,7 @@ class Invoice extends CI_Controller
                         $discountData = [
                             'discount_name' => 'Potongan COD',
                             'discount_value' => 2000 * $qty_not_free . "",
+                            'discount_max_date' => $dateMaxCod,
                         ];
                         $discountAmount = 2000 * $qty_not_free;
                     }
@@ -132,6 +133,7 @@ class Invoice extends CI_Controller
                         $discountData = [
                             'discount_name' => 'Potongan Tepat Waktu',
                             'discount_value' => 1000 * $qty_not_free . "",
+                            'discount_max_date' => $dateJatem,
                         ];
                         $discountAmount = 1000 * $qty_not_free;
                     }
