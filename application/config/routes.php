@@ -71,7 +71,35 @@ $route['api/voucher/claim'] = 'VoucherTukang/claim';
 $route['api/voucher/claimed/(:num)'] = 'VoucherTukang/getByIdContact/$1';
 // Konten
 $route['api/konten'] = 'Konten/get';
-// Produk
-$route['api/produk'] = 'Produk/get';
 // Contact
 $route['api/contact/delete'] = 'Contact/delete';
+// Produk
+$route['api/produk'] = 'Produk/get';
+// Cart
+$route['api/cart'] = 'Cart/get';
+// Cart Detail
+$route['api/cart/insert'] = 'CartDetail/create';
+$route['api/cart/delete'] = 'CartDetail/delete';
+$route['api/cart/checkout'] = 'Cart/checkout';
+// Apporder (Pesanan)
+$route['api/apporder'] = 'Apporder/index';
+$route['api/apporder/detail'] = 'Apporder/detail';
+// Invoice
+$route['api/invoice'] = 'Invoice/index';
+$route['api/invoice/detail'] = 'Invoice/detail';
+$route['api/invoice/pay'] = 'Invoice/pay';
+// QRIS
+$route['api/qris/check'] = 'Qris/checkPayment';
+$route['api/qris/request'] = 'Qris/requestPayment';
+$route['api/qris/payment'] = 'Qris/getQrisPayment';
+$route['api/qris/status'] = 'Qris/checkStatus';
+// Point
+$route['api/point/total'] = 'Point/getTotal';
+$route['api/point'] = 'Point/get';
+// Payment
+$route['api/payment/invoice'] = 'Payment/invoice';
+$route['api/payment/invoice/total'] = 'Payment/totalInvoice';
+$route['api/payment'] = 'Payment/history';
+// Promo
+$route['api/promo'] = 'PromoTopseller/index';
+$route['api/promo/(:num)'] = 'PromoTopseller/detail/$1';
