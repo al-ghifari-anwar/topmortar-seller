@@ -169,7 +169,12 @@ class Cart extends CI_Controller
 
                 $promo = $this->MPromo->getById($contact['id_promo']);
 
+                $total_qty_cart_detail = 0;
+                $total_qty_bonus = 0;
+
                 foreach ($cartDetails as $cartDetail) {
+                    $total_qty_cart_detail += $cartDetail['qty_cart_detail'];
+
                     $apporderDetailData = [
                         'id_apporder' => $id_apporder,
                         'id_produk' => $cartDetail['id_produk'],
@@ -191,6 +196,8 @@ class Cart extends CI_Controller
 
                         if (floor($multiplier) > 0) {
                             if ($contact['id_distributor'] != '6') {
+                                $total_qty_bonus += floor($multiplier) * $promo['bonus_promo'];
+
                                 $apporderBonusDetailData = [
                                     'id_apporder' => $id_apporder,
                                     'id_produk' => $cartDetail['id_produk'],
@@ -198,6 +205,34 @@ class Cart extends CI_Controller
                                     'name_produk' => $cartDetail['nama_produk'],
                                     'is_bonus' => 1,
                                     'price_produk' => $cartDetail['harga_produk'],
+                                    'qty_apporder_detail' => floor($multiplier) * $promo['bonus_promo'],
+                                    'total_apporder_detail' => 0,
+                                ];
+
+                                $saveApporderBonusDetail = $this->MApporderDetail->create($apporderBonusDetailData);
+                            }
+                        }
+                    }
+                }
+
+                // Set Bonus If Per Produk Not Match Minimum, Use qty Whole Order
+                if ($total_qty_bonus == 0) {
+                    if ($contact['id_promo'] != 0) {
+                        $kelipatan_promo = $promo['kelipatan_promo'];
+
+                        $multiplier = $total_qty_cart_detail / $kelipatan_promo;
+
+                        if (floor($multiplier) > 0) {
+                            $cheapestProduk = $this->MCartDetail->getCheapestByIdCart($id_cart);
+
+                            if ($contact['id_distributor'] != '6') {
+                                $apporderBonusDetailData = [
+                                    'id_apporder' => $id_apporder,
+                                    'id_produk' => $cheapestProduk['id_produk'],
+                                    'img_produk' => '',
+                                    'name_produk' => $cheapestProduk['nama_produk'],
+                                    'is_bonus' => 1,
+                                    'price_produk' => $cheapestProduk['harga_produk'],
                                     'qty_apporder_detail' => floor($multiplier) * $promo['bonus_promo'],
                                     'total_apporder_detail' => 0,
                                 ];
