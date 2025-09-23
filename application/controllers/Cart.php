@@ -310,7 +310,7 @@ class Cart extends CI_Controller
 
                     if ($res['total'] < $minimumScore) {
 
-                        $message = 'Pesanan perlu konfirm. Toko: *' . $contact['nama'] . '*. Status: *' . $contact['store_status'] . '*. Reputasi: *' . $contact['reputation'] . '*. Skor: *' . $minimumScore . '*.';
+                        $message = 'Pesanan perlu konfirm. Toko: *' . $contact['nama'] . '*. Status: *' . $contact['store_status'] . '*. Reputasi: *' . $contact['reputation'] . '*. Skor: *' . $res['total'] . '*.';
 
                         foreach ($adminNumbers as $adminNumber) {
                             $this->HQontak->sendNotifText($id_distributor, $adminNumber['to_number'], $adminNumber['to_name'], $template_id, $message, $from_name);
