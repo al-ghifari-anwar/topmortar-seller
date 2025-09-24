@@ -488,8 +488,20 @@ class Qris extends CI_Controller
         $pointData = [
             'id_contact' => $id_contact,
             'id_invoice' => $id_invoice,
-            'source_point' => 'Full Payment',
-            'val_point' => 3,
+            'source_point' => 'Qty over 100 Point',
+            'val_point' => 1,
+        ];
+
+        $save = $this->MPoint->create($pointData);
+    }
+
+    public function setFrequencyPoint($id_contact, $id_invoice, $val_point)
+    {
+        $pointData = [
+            'id_contact' => $id_contact,
+            'id_invoice' => $id_invoice,
+            'source_point' => 'Frequency order point',
+            'val_point' => $val_point,
         ];
 
         $save = $this->MPoint->create($pointData);
