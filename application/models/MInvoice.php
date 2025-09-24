@@ -32,7 +32,7 @@ class MInvoice extends CI_Model
         $this->db->join('tb_contact', 'tb_contact.id_contact = tb_surat_jalan.id_contact');
         $this->db->join('tb_city', 'tb_city.id_city = tb_contact.id_city');
         $this->db->where('tb_surat_jalan.id_contact', $id_contact);
-        $this->db->where('tb_invoice.status_invoice', 'Waiting');
+        $this->db->where('tb_invoice.status_invoice', 'waiting');
         $this->db->order_by('id_invoice', 'DESC');
         $query = $this->db->get('tb_invoice')->result_array();
 
@@ -45,7 +45,7 @@ class MInvoice extends CI_Model
         $this->db->join('tb_contact', 'tb_contact.id_contact = tb_surat_jalan.id_contact');
         $this->db->join('tb_city', 'tb_city.id_city = tb_contact.id_city');
         $this->db->where('tb_surat_jalan.id_contact', $id_contact);
-        $this->db->where('tb_invoice.status_invoice', 'Paid');
+        $this->db->where('tb_invoice.status_invoice', 'paid');
         $this->db->order_by('id_invoice', 'DESC');
         $query = $this->db->get('tb_invoice')->result_array();
 
