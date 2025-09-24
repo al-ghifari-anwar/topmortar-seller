@@ -104,8 +104,12 @@ class Invoice extends CI_Controller
                 $detailNotFrees = $this->MDetailSuratJalan->getNotFreeByIdSurat_jalan($invoice['id_surat_jalan']);
 
                 $qty_not_free = 0;
+                $potongan_item_cod = 0;
+                $potongan_item_tempo = 0;
                 foreach ($detailNotFrees as $detailNotFree) {
                     $qty_not_free += $detailNotFree['qty_produk'];
+                    $potongan_item_cod += $detailNotFree['potongan_cod'] * $detailNotFree['qty_produk'];
+                    $potongan_item_tempo += $detailNotFree['potongan_tempo'] * $detailNotFree['qty_produk'];
                 }
 
                 $invoice['date_jatem'] = $dateJatem;
@@ -119,25 +123,26 @@ class Invoice extends CI_Controller
                 $discountData = null;
                 $discountAmount = 0;
 
-                if ($payments == null) {
-                    if (date('Y-m-d') <= $dateMaxCod) {
-                        $discountData = [
-                            'discount_name' => 'Potongan COD',
-                            'discount_value' => 2000 * $qty_not_free . "",
-                            'discount_max_date' => $dateMaxCod,
-                        ];
-                        $discountAmount = 2000 * $qty_not_free;
-                    }
-
-                    if (date('Y-m-d') > $dateMaxCod && date('Y-m-d') <= $dateJatem) {
-                        $discountData = [
-                            'discount_name' => 'Potongan Tepat Waktu',
-                            'discount_value' => 1000 * $qty_not_free . "",
-                            'discount_max_date' => $dateJatem,
-                        ];
-                        $discountAmount = 1000 * $qty_not_free;
-                    }
+                // Tetap Potongan Cod (Cicil di hari sama)
+                if (date('Y-m-d') <= $dateMaxCod) {
+                    $discountData = [
+                        'discount_name' => 'Potongan COD',
+                        'discount_value' => $potongan_item_cod . "",
+                        'discount_max_date' => $dateMaxCod,
+                    ];
+                    $discountAmount = $potongan_item_cod;
                 }
+
+                if (date('Y-m-d') > $dateMaxCod && date('Y-m-d') <= $dateJatem) {
+                    $discountData = [
+                        'discount_name' => 'Potongan Tepat Waktu',
+                        'discount_value' => $potongan_item_tempo . "",
+                        'discount_max_date' => $dateJatem,
+                    ];
+                    $discountAmount = $potongan_item_tempo;
+                }
+                // if ($payments == null) {
+                // }
 
                 $invoice['total_invoice'] = $invoice['total_invoice'] - $discountAmount . "";
                 $invoice['discount_extra'] = $discountData;
