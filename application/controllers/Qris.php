@@ -423,6 +423,9 @@ class Qris extends CI_Controller
 
                     return $this->output->set_output(json_encode($result));
                 } else {
+                    $paidInvoice = $this->MInvoice->getPaidByIdContact($contact['id_contact']);
+                    $countPaidInvoice = count($paidInvoice);
+
                     $lastPayment = $this->MPayment->getLastPaymentByIdInvoice($id_invoice);
 
                     $date_payment = date('Y-m-d', strtotime($lastPayment['date_payment']));
@@ -433,6 +436,8 @@ class Qris extends CI_Controller
                         if ($totalItem['qty_produk'] >= 100) {
                             $this->setQtyPoint($invoice['id_contact'], $id_invoice);
                         }
+
+                        $this->setFrequencyPoint($contact['id_contact'], $id_invoice, $countPaidInvoice);
                     }
 
                     $invoiceData = [
@@ -472,6 +477,8 @@ class Qris extends CI_Controller
                     $this->setQtyPoint($invoice['id_contact'], $id_invoice);
                 }
 
+                $this->setFrequencyPoint($contact['id_contact'], $id_invoice, $countPaidInvoice);
+
                 $result = [
                     'code' => 200,
                     'status' => 'ok',
@@ -507,8 +514,14 @@ class Qris extends CI_Controller
         $save = $this->MPoint->create($pointData);
     }
 
-    public function setFrequencyPoint($id_contact, $id_invoice, $val_point)
+    public function setFrequencyPoint($id_contact, $id_invoice, $countPaidInvoice)
     {
+        $val_point = 2;
+
+        if ($countPaidInvoice > 1) {
+            $val_point = 1;
+        }
+
         $pointData = [
             'id_contact' => $id_contact,
             'id_invoice' => $id_invoice,
