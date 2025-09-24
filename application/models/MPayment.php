@@ -2,6 +2,13 @@
 
 class MPayment extends CI_Model
 {
+    public function getLastPaymentByIdInvoice($id_invoice)
+    {
+        $this->db->order_by('tb_payment.date_payment', 'DESC');
+        $query = $this->db->get_where('tb_payment', ['id_invoice' => $id_invoice])->row_array();
+
+        return $query;
+    }
 
     public function getPaymentByIdContact($id_contact)
     {
