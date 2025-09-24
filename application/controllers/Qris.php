@@ -423,6 +423,18 @@ class Qris extends CI_Controller
 
                     return $this->output->set_output(json_encode($result));
                 } else {
+                    $lastPayment = $this->MPayment->getLastPaymentByIdInvoice($id_invoice);
+
+                    $date_payment = date('Y-m-d', strtotime($lastPayment['date_payment']));
+
+                    if ($date_payment == date("Y-m-d")) {
+                        $this->setPaymentPoint($invoice['id_contact'], $id_invoice);
+
+                        if ($totalItem['qty_produk'] >= 100) {
+                            $this->setQtyPoint($invoice['id_contact'], $id_invoice);
+                        }
+                    }
+
                     $invoiceData = [
                         'discount_extra_name' => $discountName,
                         'discount_extra_amount' => $discountAmount,
