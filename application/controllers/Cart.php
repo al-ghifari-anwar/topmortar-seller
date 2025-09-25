@@ -222,7 +222,7 @@ class Cart extends CI_Controller
 
                         if (floor($multiplier) > 0) {
                             if ($contact['id_distributor'] != '6') {
-                                $total_qty_bonus += floor($multiplier) * $promo['bonus_promo'];
+                                $total_qty_bonus += floor($multiplier) * $cartDetail['bonus_promo'];
 
                                 $apporderBonusDetailData = [
                                     'id_apporder' => $id_apporder,
