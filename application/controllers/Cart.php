@@ -189,27 +189,53 @@ class Cart extends CI_Controller
 
                     // Calculate Bonus
                     if ($contact['id_promo'] != 0) {
-                        $qty_apporder_detail = $cartDetail['qty_cart_detail'];
-                        $kelipatan_promo = $promo['kelipatan_promo'];
+                        if ($cartDetail['is_default_promo'] == 1) {
+                            $qty_apporder_detail = $cartDetail['qty_cart_detail'];
+                            $kelipatan_promo = $promo['kelipatan_promo'];
 
-                        $multiplier = $qty_apporder_detail / $kelipatan_promo;
+                            $multiplier = $qty_apporder_detail / $kelipatan_promo;
 
-                        if (floor($multiplier) > 0) {
-                            if ($contact['id_distributor'] != '6') {
-                                $total_qty_bonus += floor($multiplier) * $promo['bonus_promo'];
+                            if (floor($multiplier) > 0) {
+                                if ($contact['id_distributor'] != '6') {
+                                    $total_qty_bonus += floor($multiplier) * $promo['bonus_promo'];
 
-                                $apporderBonusDetailData = [
-                                    'id_apporder' => $id_apporder,
-                                    'id_produk' => $cartDetail['id_produk'],
-                                    'img_produk' => '',
-                                    'name_produk' => $cartDetail['nama_produk'],
-                                    'is_bonus' => 1,
-                                    'price_produk' => $cartDetail['harga_produk'],
-                                    'qty_apporder_detail' => floor($multiplier) * $promo['bonus_promo'],
-                                    'total_apporder_detail' => 0,
-                                ];
+                                    $apporderBonusDetailData = [
+                                        'id_apporder' => $id_apporder,
+                                        'id_produk' => $cartDetail['id_produk'],
+                                        'img_produk' => '',
+                                        'name_produk' => $cartDetail['nama_produk'],
+                                        'is_bonus' => 1,
+                                        'price_produk' => $cartDetail['harga_produk'],
+                                        'qty_apporder_detail' => floor($multiplier) * $promo['bonus_promo'],
+                                        'total_apporder_detail' => 0,
+                                    ];
 
-                                $saveApporderBonusDetail = $this->MApporderDetail->create($apporderBonusDetailData);
+                                    $saveApporderBonusDetail = $this->MApporderDetail->create($apporderBonusDetailData);
+                                }
+                            }
+                        } else {
+                            $qty_apporder_detail = $cartDetail['qty_cart_detail'];
+                            $kelipatan_promo = $cartDetail['kelipatan_promo'];
+
+                            $multiplier = $qty_apporder_detail / $kelipatan_promo;
+
+                            if (floor($multiplier) > 0) {
+                                if ($contact['id_distributor'] != '6') {
+                                    $total_qty_bonus += floor($multiplier) * $promo['bonus_promo'];
+
+                                    $apporderBonusDetailData = [
+                                        'id_apporder' => $id_apporder,
+                                        'id_produk' => $cartDetail['id_produk'],
+                                        'img_produk' => '',
+                                        'name_produk' => $cartDetail['nama_produk'],
+                                        'is_bonus' => 1,
+                                        'price_produk' => $cartDetail['harga_produk'],
+                                        'qty_apporder_detail' => floor($multiplier) * $cartDetail['bonus_promo'],
+                                        'total_apporder_detail' => 0,
+                                    ];
+
+                                    $saveApporderBonusDetail = $this->MApporderDetail->create($apporderBonusDetailData);
+                                }
                             }
                         }
                     }
