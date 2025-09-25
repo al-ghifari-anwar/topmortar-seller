@@ -469,6 +469,9 @@ class Qris extends CI_Controller
                     'status_invoice' => 'paid'
                 ];
 
+                $paidInvoice = $this->MInvoice->getPaidByIdContact($contact['id_contact']);
+                $countPaidInvoice = count($paidInvoice);
+
                 $saveInvoice = $this->MInvoice->update($id_invoice, $invoiceData);
 
                 $this->setPaymentPoint($invoice['id_contact'], $id_invoice);
