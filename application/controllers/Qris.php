@@ -388,7 +388,7 @@ class Qris extends CI_Controller
 
         $total_invoice = $invoice['total_invoice'] - $discountAmount;
 
-        $sisaInvoice = $invoice['total_invoice'] - $totalPaid;
+        $sisaInvoice = $invoice['total_invoice'] - $totalPaid - $discountAmount;
 
         $totalItem = $this->MDetailSuratJalan->getTotalQtyByIdSuratJalan($invoice['id_surat_jalan']);
 
@@ -446,6 +446,7 @@ class Qris extends CI_Controller
                         'total_invoice' => $total_invoice,
                         'status_invoice' => 'paid'
                     ];
+                    // 
 
                     $saveInvoice = $this->MInvoice->update($id_invoice, $invoiceData);
 
