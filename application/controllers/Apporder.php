@@ -50,6 +50,7 @@ class Apporder extends CI_Controller
                     }
                 }
 
+                $apporder['no_surat_jalan'] = $suratJalan['no_surat_jalan'];
                 $apporder['status_apporder'] = $status_apporder;
                 $apporder['total_qty'] = count($apporderDetails) . "";
                 $apporder['items'] = $apporderLimitDetails;
@@ -123,6 +124,7 @@ class Apporder extends CI_Controller
                 }
             }
 
+            $apporder['no_surat_jalan'] = $suratJalan['no_surat_jalan'];
             $apporder['status_apporder'] = $status_apporder;
             $apporder['total_qty'] = count($apporderDetails) . "";
             $apporder['items'] = $apporderDetails;
