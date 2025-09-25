@@ -30,6 +30,10 @@ class Apporder extends CI_Controller
             foreach ($apporders as $apporder) {
                 $id_apporder = $apporder['id_apporder'];
 
+                $no_order = "SLR" . str_pad($apporder['id_apporder'], 7, STR_PAD_LEFT);
+
+                $apporder['no_order'] = $no_order;
+
                 $apporderDetails = $this->MApporderDetail->getByIdApporder($id_apporder);
 
                 $apporderLimitDetails = $this->MApporderDetail->getByIdApporderLimit($id_apporder);
@@ -100,6 +104,10 @@ class Apporder extends CI_Controller
 
             // foreach ($apporders as $apporder) {
             //     $id_apporder = $apporder['id_apporder'];
+
+            $no_order = "SLR" . str_pad($apporder['id_apporder'], 7, STR_PAD_LEFT);
+
+            $apporder['no_order'] = $no_order;
 
             $apporderDetails = $this->MApporderDetail->getByIdApporder($id_apporder);
 
