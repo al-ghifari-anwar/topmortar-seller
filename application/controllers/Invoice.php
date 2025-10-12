@@ -302,4 +302,16 @@ class Invoice extends CI_Controller
 
         $save = $this->MPoint->create($pointData);
     }
+
+    public function setNominalPoint($id_contact, $id_invoice, $val_point)
+    {
+        $pointData = [
+            'id_contact' => $id_contact,
+            'id_invoice' => $id_invoice,
+            'source_point' => 'Full Payment',
+            'val_point' => 3,
+        ];
+
+        $save = $this->MPoint->create($pointData);
+    }
 }

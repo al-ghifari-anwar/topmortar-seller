@@ -433,8 +433,11 @@ class Qris extends CI_Controller
                     if ($date_payment == date("Y-m-d")) {
                         $this->setPaymentPoint($invoice['id_contact'], $id_invoice);
 
-                        if ($totalItem['qty_produk'] >= 100) {
-                            $this->setQtyPoint($invoice['id_contact'], $id_invoice);
+                        // if ($totalItem['qty_produk'] >= 100) {
+                        //     $this->setQtyPoint($invoice['id_contact'], $id_invoice);
+                        // }
+                        if ($total_invoice >= 1000000) {
+                            $this->setNominalPoint($invoice['id_contact'], $id_invoice, $total_invoice);
                         }
 
                         $this->setFrequencyPoint($contact['id_contact'], $id_invoice, $countPaidInvoice);
@@ -477,8 +480,11 @@ class Qris extends CI_Controller
 
                 $this->setPaymentPoint($invoice['id_contact'], $id_invoice);
 
-                if ($totalItem['qty_produk'] >= 100) {
-                    $this->setQtyPoint($invoice['id_contact'], $id_invoice);
+                // if ($totalItem['qty_produk'] >= 100) {
+                //     $this->setQtyPoint($invoice['id_contact'], $id_invoice);
+                // }
+                if ($total_invoice >= 1000000) {
+                    $this->setNominalPoint($invoice['id_contact'], $id_invoice, $total_invoice);
                 }
 
                 $this->setFrequencyPoint($contact['id_contact'], $id_invoice, $countPaidInvoice);
@@ -530,6 +536,20 @@ class Qris extends CI_Controller
             'id_contact' => $id_contact,
             'id_invoice' => $id_invoice,
             'source_point' => 'Frequency order point',
+            'val_point' => $val_point,
+        ];
+
+        $save = $this->MPoint->create($pointData);
+    }
+
+    public function setNominalPoint($id_contact, $id_invoice, $total_invoice)
+    {
+        $val_point = floor($total_invoice / 100000);
+
+        $pointData = [
+            'id_contact' => $id_contact,
+            'id_invoice' => $id_invoice,
+            'source_point' => 'Full Payment',
             'val_point' => $val_point,
         ];
 
