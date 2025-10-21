@@ -104,4 +104,5 @@ $route['api/payment'] = 'Payment/history';
 $route['api/promo'] = 'PromoTopseller/index';
 $route['api/promo/(:num)'] = 'PromoTopseller/detail/$1';
 // Merchandise
-$route['api/merchandise'] = 'Merchandise/get';
+$route['api/merchandise'] = 'Merchandise/index';
+$route['api/merchandise/(:num)'] = 'Merchandise/detail/$1';
