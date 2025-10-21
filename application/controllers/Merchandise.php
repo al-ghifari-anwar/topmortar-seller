@@ -1,6 +1,6 @@
 <?php
 
-class Merchandise extends CI_Model
+class Merchandise extends CI_Controller
 {
     public function __construct()
     {
