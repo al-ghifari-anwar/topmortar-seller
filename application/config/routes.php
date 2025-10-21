@@ -103,3 +103,5 @@ $route['api/payment'] = 'Payment/history';
 // Promo
 $route['api/promo'] = 'PromoTopseller/index';
 $route['api/promo/(:num)'] = 'PromoTopseller/detail/$1';
+// Merchandise
+$route['api/merchandise'] = 'Merchandise/get';
