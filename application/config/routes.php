@@ -106,3 +106,5 @@ $route['api/promo/(:num)'] = 'PromoTopseller/detail/$1';
 // Merchandise
 $route['api/merchandise'] = 'Merchandise/index';
 $route['api/merchandise/(:num)'] = 'Merchandise/detail/$1';
+// Voucher
+$route['api/voucher'] = 'Voucher/index';
