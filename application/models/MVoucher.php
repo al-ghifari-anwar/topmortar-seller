@@ -1,6 +1,6 @@
 <?php
 
-class MVoucher extends CI_Controller
+class MVoucher extends CI_Model
 {
     public function getNotClaimedByIdContact($id_contact)
     {
