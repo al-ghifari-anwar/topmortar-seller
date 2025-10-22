@@ -549,7 +549,7 @@ class Qris extends CI_Controller
         $pointData = [
             'id_contact' => $id_contact,
             'id_invoice' => $id_invoice,
-            'source_point' => 'Full Payment',
+            'source_point' => 'Point for every 100k',
             'val_point' => $val_point,
         ];
 
