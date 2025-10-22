@@ -53,4 +53,45 @@ class Voucher extends CI_Controller
             return $this->output->set_output(json_encode($result));
         }
     }
+
+    public function claim()
+    {
+        $this->output->set_content_type('application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $post = json_decode(file_get_contents('php://input'), true) != null ? json_decode(file_get_contents('php://input'), true) : $this->input->post();
+
+            $voucherData = [
+                'is_claimed' => 1,
+            ];
+
+            $save = $this->MVoucher->update($post['id_voucher'], $voucherData);
+
+            if ($save) {
+                $result = [
+                    'code' => 200,
+                    'status' => 'ok',
+                    'msg' => 'Berhasil claim voucher, gunakan voucher pada saat checkout'
+                ];
+
+                return $this->output->set_output(json_encode($result));
+            } else {
+                $result = [
+                    'code' => 400,
+                    'status' => 'failed',
+                    'msg' => 'Not Found'
+                ];
+
+                return $this->output->set_output(json_encode($result));
+            }
+        } else {
+            $result = [
+                'code' => 400,
+                'status' => 'failed',
+                'msg' => 'Not Found'
+            ];
+
+            return $this->output->set_output(json_encode($result));
+        }
+    }
 }

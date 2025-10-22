@@ -25,4 +25,15 @@ class MVoucher extends CI_Model
 
         return $query;
     }
+
+    public function update($id_voucher, $voucherData)
+    {
+        $query = $this->db->update('tb_voucher', $voucherData, ['id_voucher' => $id_voucher]);
+
+        if ($query) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
