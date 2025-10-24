@@ -8,6 +8,7 @@ class CartDetail extends CI_Controller
         $this->load->model('MProduk');
         $this->load->model('MCart');
         $this->load->model('MCartDetail');
+        $this->load->model('MVoucher');
     }
 
     public function create()
