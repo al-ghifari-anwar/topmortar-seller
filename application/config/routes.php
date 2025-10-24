@@ -81,6 +81,8 @@ $route['api/cart'] = 'Cart/get';
 $route['api/cart/insert'] = 'CartDetail/create';
 $route['api/cart/delete'] = 'CartDetail/delete';
 $route['api/cart/checkout'] = 'Cart/checkout';
+// Apply Voucher
+$route['api/cart/apply-voucher'] = 'CartDetail/applyVoucher';
 // Apporder (Pesanan)
 $route['api/apporder'] = 'Apporder/index';
 $route['api/apporder/detail'] = 'Apporder/detail';

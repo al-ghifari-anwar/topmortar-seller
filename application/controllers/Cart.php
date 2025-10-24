@@ -18,6 +18,7 @@ class Cart extends CI_Controller
         $this->load->model('MSettingTopseller');
         $this->load->model('MMasterProduk');
         $this->load->model('HQontak');
+        $this->load->model('MVoucher');
     }
 
     public function get()
@@ -67,6 +68,9 @@ class Cart extends CI_Controller
                         $cart['details'] = $cartDetails;
                     }
 
+                    $voucherCartDetails = $this->MCartDetail->getProductVoucherByIdCart($cart['id_cart']);
+
+                    $cart['product_vouchers'] = $voucherCartDetails;
 
                     $result = [
                         'code' => 200,

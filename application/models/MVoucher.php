@@ -13,7 +13,7 @@ class MVoucher extends CI_Model
     public function getClaimedByIdContact($id_contact)
     {
         $this->db->order_by('tb_voucher.date_voucher', 'DESC');
-        $query = $this->db->get_where('tb_voucher', ['tb_voucher.id_contact' => $id_contact, 'is_claimed' => 1])->result_array();
+        $query = $this->db->get_where('tb_voucher', ['tb_voucher.id_contact' => $id_contact, 'is_claimed' => 1, 'is_used' => 0])->result_array();
 
         return $query;
     }
