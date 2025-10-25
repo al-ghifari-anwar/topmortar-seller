@@ -112,6 +112,10 @@ class Cart extends CI_Controller
                     $cart['details'] = $cartDetails;
                 }
 
+                $voucherCartDetails = $this->MCartDetail->getProductVoucherByIdCart($cart['id_cart']);
+
+                $cart['product_vouchers'] = $voucherCartDetails;
+
                 $result = [
                     'code' => 200,
                     'status' => 'ok',
