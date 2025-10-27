@@ -153,7 +153,7 @@ class Cart extends CI_Controller
 
             $contact = $this->MContact->getById($id_contact);
 
-            $cartDetails = $this->MCartDetail->getByIdCart($id_cart);
+            $cartDetails = $this->MCartDetail->getAllByIdCart($id_cart);
 
             $subtotal_apporder = 0;
             $discount_apporder = 0;
