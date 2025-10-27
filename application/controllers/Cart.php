@@ -192,6 +192,8 @@ class Cart extends CI_Controller
                         'price_produk' => $cartDetail['harga_produk'],
                         'qty_apporder_detail' => $cartDetail['qty_cart_detail'],
                         'total_apporder_detail' => $cartDetail['qty_cart_detail'] * $cartDetail['harga_produk'],
+                        'is_bonus' => $cartDetail['is_bonus'],
+                        'id_vouchers' => $cartDetail['id_vouchers'],
                     ];
 
                     $saveApporderDetail = $this->MApporderDetail->create($apporderDetailData);
