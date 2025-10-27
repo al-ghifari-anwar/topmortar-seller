@@ -148,6 +148,45 @@ class CartDetail extends CI_Controller
         }
     }
 
+    public function removeVoucher()
+    {
+        $this->output->set_content_type('application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $post = json_decode(file_get_contents('php://input'), true) != null ? json_decode(file_get_contents('php://input'), true) : $this->input->post();
+
+            $id_cart = $post['id_cart'];
+
+            $save = $this->MCartDetail->deleteProductVoucherByIdCart($id_cart);
+
+            if ($save) {
+                $result = [
+                    'code' => 200,
+                    'status' => 'ok',
+                    'msg' => 'Berhasil menggunakan voucher'
+                ];
+
+                return $this->output->set_output(json_encode($result));
+            } else {
+                $result = [
+                    'code' => 400,
+                    'status' => 'failed',
+                    'msg' => 'Terjadi kesalahan'
+                ];
+
+                return $this->output->set_output(json_encode($result));
+            }
+        } else {
+            $result = [
+                'code' => 400,
+                'status' => 'failed',
+                'msg' => 'Not Found'
+            ];
+
+            return $this->output->set_output(json_encode($result));
+        }
+    }
+
     public function delete()
     {
         $this->output->set_content_type('application/json');
