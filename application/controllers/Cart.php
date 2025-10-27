@@ -191,7 +191,7 @@ class Cart extends CI_Controller
                         'name_produk' => $cartDetail['nama_produk'],
                         'price_produk' => $cartDetail['harga_produk'],
                         'qty_apporder_detail' => $cartDetail['qty_cart_detail'],
-                        'total_apporder_detail' => $cartDetail['qty_cart_detail'] * $cartDetail['harga_produk'],
+                        'total_apporder_detail' => $cartDetail['is_bonus'] == 0 ? $cartDetail['qty_cart_detail'] * $cartDetail['harga_produk'] : 0,
                         'is_bonus' => $cartDetail['is_bonus'],
                         'id_vouchers' => $cartDetail['id_vouchers'],
                     ];
