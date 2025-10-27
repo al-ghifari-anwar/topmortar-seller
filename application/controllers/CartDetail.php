@@ -157,6 +157,20 @@ class CartDetail extends CI_Controller
 
             $id_cart = $post['id_cart'];
 
+            $getProductVoucher = $this->MCartDetail->getSingleProductVoucherByIdCart($id_cart);
+
+            $id_vouchers = explode(',', $getProductVoucher['id_vouchers']);
+
+            // Update Voucher
+            foreach ($id_vouchers as $id_voucher) {
+                $voucherData = [
+                    'is_used' => 0,
+                    'used_date' => null,
+                ];
+
+                $this->MVoucher->update($id_voucher, $voucherData);
+            }
+
             $save = $this->MCartDetail->deleteProductVoucherByIdCart($id_cart);
 
             if ($save) {

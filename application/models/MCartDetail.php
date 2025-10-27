@@ -22,6 +22,16 @@ class MCartDetail extends CI_Model
         return $query;
     }
 
+    public function getSingleProductVoucherByIdCart($id_cart)
+    {
+        $this->db->join('tb_produk', 'tb_produk.id_produk = tb_cart_detail.id_produk');
+        $this->db->join('tb_master_produk', 'tb_produk.id_master_produk = tb_master_produk.id_master_produk');
+        $this->db->join('tb_satuan', 'tb_satuan.id_satuan = tb_produk.id_satuan');
+        $query = $this->db->get_where('tb_cart_detail', ['id_cart' => $id_cart, 'id_vouchers !=' => null, 'is_bonus' => 1], 1)->row_array();
+
+        return $query;
+    }
+
     public function deleteProductVoucherByIdCart($id_cart)
     {
         $query = $this->db->delete('tb_cart_detail', ['is_bonus' => 1, 'id_cart' => $id_cart]);
