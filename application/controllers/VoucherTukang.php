@@ -247,64 +247,51 @@ class VoucherTukang extends CI_Controller
                                         $this->MVoucherTukang->claim($id_md5, $id_contact);
 
                                         // Send Message
-                                        $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
-                                        $integration_id = $getQontak['integration_id'];
-                                        $wa_token = $getQontak['token'];
+                                        // $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
+                                        // $integration_id = $getQontak['integration_id'];
+                                        // $wa_token = $getQontak['token'];
                                         // $template_id = '781b4601-fba6-4c69-81ad-164a680ecce7';
-                                        $template_id = '7bf2d2a0-bdd5-4c70-ba9f-a9665f66a841';
+                                        // $template_id = '7bf2d2a0-bdd5-4c70-ba9f-a9665f66a841';
 
-                                        $message = "Transaksi claim voucher atas nama " . $nama_tukang . " Berhasil. Dana telah ditransfer ke rekening anda. Silahkan cek mutasi anda.";
+                                        $message = "Transaksi claim voucher atas nama *" . $nama_tukang . "* Berhasil. Dana telah ditransfer ke rekening anda. Silahkan cek mutasi anda.";
+
+                                        $haloai = $this->db->get_where('tb_haloai', ['id_distributor' => 1])->row_array();
+                                        $wa_token = $haloai['token_haloai'];
+                                        $business_id = $haloai['business_id_haloai'];
+                                        $channel_id = $haloai['channel_id_haloai'];
+                                        $template = 'info_meeting_baru';
+
+                                        $haloaiPayload = [
+                                            'activate_ai_after_send' => false,
+                                            'channel_id' => $channel_id,
+                                            'fallback_template_message' => $template,
+                                            'fallback_template_variables' => [
+                                                $nama_contact,
+                                                trim(preg_replace('/\s+/', ' ', $message)),
+                                                "PT Top Mortar Indonesia",
+                                            ],
+                                            'phone_number' => $nomorhp_contact,
+                                            'text' => trim(preg_replace('/\s+/', ' ', $message)),
+                                        ];
 
                                         $curl = curl_init();
 
-                                        curl_setopt_array(
-                                            $curl,
-                                            array(
-                                                CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
-                                                CURLOPT_RETURNTRANSFER => true,
-                                                CURLOPT_ENCODING => '',
-                                                CURLOPT_MAXREDIRS => 10,
-                                                CURLOPT_TIMEOUT => 0,
-                                                CURLOPT_FOLLOWLOCATION => true,
-                                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                                CURLOPT_CUSTOMREQUEST => 'POST',
-                                                CURLOPT_POSTFIELDS => '{
-                                                "to_number": "' . $nomorhp_contact . '",
-                                                "to_name": "' . $nama_contact . '",
-                                                "message_template_id": "' . $template_id . '",
-                                                "channel_integration_id": "' . $integration_id . '",
-                                                "language": {
-                                                    "code": "id"
-                                                },
-                                                "parameters": {
-                                                    "header":{
-                                                        "format":"IMAGE",
-                                                        "params": [
-                                                            {
-                                                                "key":"url",
-                                                                "value":"https://seller.topmortarindonesia.com/assets/img/notif_toko.png"
-                                                            },
-                                                            {
-                                                                "key":"filename",
-                                                                "value":"qrtukang.png"
-                                                            }
-                                                        ]
-                                                    },
-                                                    "body": [
-                                                    {
-                                                        "key": "1",
-                                                        "value": "nama",
-                                                        "value_text": "' . $message . '"
-                                                    }
-                                                    ]
-                                                }
-                                            }',
-                                                CURLOPT_HTTPHEADER => array(
-                                                    'Authorization: Bearer ' . $wa_token,
-                                                    'Content-Type: application/json'
-                                                ),
-                                            )
-                                        );
+                                        curl_setopt_array($curl, array(
+                                            CURLOPT_URL => 'https://www.haloai.co.id/api/open/channel/whatsapp/v1/sendMessageByPhoneSync',
+                                            CURLOPT_RETURNTRANSFER => true,
+                                            CURLOPT_ENCODING => '',
+                                            CURLOPT_MAXREDIRS => 10,
+                                            CURLOPT_TIMEOUT => 0,
+                                            CURLOPT_FOLLOWLOCATION => true,
+                                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                            CURLOPT_CUSTOMREQUEST => 'POST',
+                                            CURLOPT_POSTFIELDS => json_encode($haloaiPayload),
+                                            CURLOPT_HTTPHEADER => array(
+                                                'Authorization: Bearer ' . $wa_token,
+                                                'X-HaloAI-Business-Id: ' . $business_id,
+                                                'Content-Type: application/json'
+                                            ),
+                                        ));
 
                                         $response = curl_exec($curl);
 
@@ -316,10 +303,10 @@ class VoucherTukang extends CI_Controller
 
                                         if ($status == 'success') {
                                             // Send Message Tukang
-                                            $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
-                                            $integration_id = $getQontak['integration_id'];
-                                            $wa_token = $getQontak['token'];
-                                            $template_id = '7bf2d2a0-bdd5-4c70-ba9f-a9665f66a841';
+                                            // $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
+                                            // $integration_id = $getQontak['integration_id'];
+                                            // $wa_token = $getQontak['token'];
+                                            // $template_id = '7bf2d2a0-bdd5-4c70-ba9f-a9665f66a841';
 
                                             $message = "Selamat anda telah mendapat potongan diskon 10.000. Program ini disponsori oleh Top Mortar Indonesia";
                                             $img_tukang = "https://seller.topmortarindonesia.com/assets/img/notif_tukang.png";
@@ -329,56 +316,43 @@ class VoucherTukang extends CI_Controller
                                                 $img_tukang = "https://seller.topmortarindonesia.com/assets/img/notif_tukang_tokopromo.png";
                                             }
 
+                                            $haloai = $this->db->get_where('tb_haloai', ['id_distributor' => 1])->row_array();
+                                            $wa_token = $haloai['token_haloai'];
+                                            $business_id = $haloai['business_id_haloai'];
+                                            $channel_id = $haloai['channel_id_haloai'];
+                                            $template = 'info_meeting_baru';
+
+                                            $haloaiPayload = [
+                                                'activate_ai_after_send' => false,
+                                                'channel_id' => $channel_id,
+                                                'fallback_template_message' => $template,
+                                                'fallback_template_variables' => [
+                                                    $nama_tukang,
+                                                    trim(preg_replace('/\s+/', ' ', $message)),
+                                                    "PT Top Mortar Indonesia",
+                                                ],
+                                                'phone_number' => $nomorhp_tukang,
+                                                'text' => trim(preg_replace('/\s+/', ' ', $message)),
+                                            ];
+
                                             $curl = curl_init();
 
-                                            curl_setopt_array(
-                                                $curl,
-                                                array(
-                                                    CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
-                                                    CURLOPT_RETURNTRANSFER => true,
-                                                    CURLOPT_ENCODING => '',
-                                                    CURLOPT_MAXREDIRS => 10,
-                                                    CURLOPT_TIMEOUT => 0,
-                                                    CURLOPT_FOLLOWLOCATION => true,
-                                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                                    CURLOPT_CUSTOMREQUEST => 'POST',
-                                                    CURLOPT_POSTFIELDS => '{
-                                                "to_number": "' . $nomorhp_tukang . '",
-                                                "to_name": "' . $nama_tukang . '",
-                                                "message_template_id": "' . $template_id . '",
-                                                "channel_integration_id": "' . $integration_id . '",
-                                                "language": {
-                                                    "code": "id"
-                                                },
-                                                "parameters": {
-                                                    "header":{
-                                                        "format":"IMAGE",
-                                                        "params": [
-                                                            {
-                                                                "key":"url",
-                                                                "value":"' . $img_tukang . '"
-                                                            },
-                                                            {
-                                                                "key":"filename",
-                                                                "value":"qrtukang.png"
-                                                            }
-                                                        ]
-                                                    },
-                                                    "body": [
-                                                    {
-                                                        "key": "1",
-                                                        "value": "nama",
-                                                        "value_text": "' . $message . '"
-                                                    }
-                                                    ]
-                                                }
-                                            }',
-                                                    CURLOPT_HTTPHEADER => array(
-                                                        'Authorization: Bearer ' . $wa_token,
-                                                        'Content-Type: application/json'
-                                                    ),
-                                                )
-                                            );
+                                            curl_setopt_array($curl, array(
+                                                CURLOPT_URL => 'https://www.haloai.co.id/api/open/channel/whatsapp/v1/sendMessageByPhoneSync',
+                                                CURLOPT_RETURNTRANSFER => true,
+                                                CURLOPT_ENCODING => '',
+                                                CURLOPT_MAXREDIRS => 10,
+                                                CURLOPT_TIMEOUT => 0,
+                                                CURLOPT_FOLLOWLOCATION => true,
+                                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                                CURLOPT_CUSTOMREQUEST => 'POST',
+                                                CURLOPT_POSTFIELDS => json_encode($haloaiPayload),
+                                                CURLOPT_HTTPHEADER => array(
+                                                    'Authorization: Bearer ' . $wa_token,
+                                                    'X-HaloAI-Business-Id: ' . $business_id,
+                                                    'Content-Type: application/json'
+                                                ),
+                                            ));
 
                                             $response = curl_exec($curl);
 

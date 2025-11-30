@@ -8,6 +8,7 @@ class CartDetail extends CI_Controller
         $this->load->model('MProduk');
         $this->load->model('MCart');
         $this->load->model('MCartDetail');
+        $this->load->model('MVoucher');
     }
 
     public function create()
@@ -92,6 +93,111 @@ class CartDetail extends CI_Controller
             ];
 
             $this->output->set_output(json_encode($result));
+        }
+    }
+
+    public function applyVoucher()
+    {
+        $this->output->set_content_type('application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $post = json_decode(file_get_contents('php://input'), true) != null ? json_decode(file_get_contents('php://input'), true) : $this->input->post();
+
+            $id_cart = $post['id_cart'];
+            $id_vouchers = $post['id_vouchers'];
+            $id_products = $post['id_products'];
+
+            // Update Voucher
+            foreach ($id_vouchers as $id_voucher) {
+                $voucherData = [
+                    'is_used' => 1,
+                    'used_date' => date('Y-m-d H:i:s'),
+                ];
+
+                $this->MVoucher->update($id_voucher, $voucherData);
+            }
+
+            // Insert Product
+            foreach ($id_products as $id_product) {
+                $cartDetailData = [
+                    'id_cart' => $id_cart,
+                    'id_produk' => $id_product['id'],
+                    'qty_cart_detail' => $id_product['qty'],
+                    'is_bonus' => 1,
+                    'id_vouchers' => implode(",", $id_vouchers),
+                ];
+
+                $this->MCartDetail->create($cartDetailData);
+            }
+
+            $result = [
+                'code' => 200,
+                'status' => 'ok',
+                'msg' => 'Berhasil menggunakan voucher'
+            ];
+
+            return $this->output->set_output(json_encode($result));
+        } else {
+            $result = [
+                'code' => 400,
+                'status' => 'failed',
+                'msg' => 'Not Found'
+            ];
+
+            return $this->output->set_output(json_encode($result));
+        }
+    }
+
+    public function removeVoucher()
+    {
+        $this->output->set_content_type('application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $post = json_decode(file_get_contents('php://input'), true) != null ? json_decode(file_get_contents('php://input'), true) : $this->input->post();
+
+            $id_cart = $post['id_cart'];
+
+            $getProductVoucher = $this->MCartDetail->getSingleProductVoucherByIdCart($id_cart);
+
+            $id_vouchers = explode(',', $getProductVoucher['id_vouchers']);
+
+            // Update Voucher
+            foreach ($id_vouchers as $id_voucher) {
+                $voucherData = [
+                    'is_used' => 0,
+                    'used_date' => null,
+                ];
+
+                $this->MVoucher->update($id_voucher, $voucherData);
+            }
+
+            $save = $this->MCartDetail->deleteProductVoucherByIdCart($id_cart);
+
+            if ($save) {
+                $result = [
+                    'code' => 200,
+                    'status' => 'ok',
+                    'msg' => 'Berhasil menggunakan voucher'
+                ];
+
+                return $this->output->set_output(json_encode($result));
+            } else {
+                $result = [
+                    'code' => 400,
+                    'status' => 'failed',
+                    'msg' => 'Terjadi kesalahan'
+                ];
+
+                return $this->output->set_output(json_encode($result));
+            }
+        } else {
+            $result = [
+                'code' => 400,
+                'status' => 'failed',
+                'msg' => 'Not Found'
+            ];
+
+            return $this->output->set_output(json_encode($result));
         }
     }
 

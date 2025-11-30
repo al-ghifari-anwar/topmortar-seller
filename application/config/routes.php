@@ -81,6 +81,9 @@ $route['api/cart'] = 'Cart/get';
 $route['api/cart/insert'] = 'CartDetail/create';
 $route['api/cart/delete'] = 'CartDetail/delete';
 $route['api/cart/checkout'] = 'Cart/checkout';
+// Product Voucher
+$route['api/cart/apply-voucher'] = 'CartDetail/applyVoucher';
+$route['api/cart/remove-voucher'] = 'CartDetail/removeVoucher';
 // Apporder (Pesanan)
 $route['api/apporder'] = 'Apporder/index';
 $route['api/apporder/detail'] = 'Apporder/detail';
@@ -103,3 +106,9 @@ $route['api/payment'] = 'Payment/history';
 // Promo
 $route['api/promo'] = 'PromoTopseller/index';
 $route['api/promo/(:num)'] = 'PromoTopseller/detail/$1';
+// Merchandise
+$route['api/merchandise'] = 'Merchandise/index';
+$route['api/merchandise/(:num)'] = 'Merchandise/detail/$1';
+// Voucher
+$route['api/voucher-toko'] = 'Voucher/index';
+$route['api/voucher-toko/claim'] = 'Voucher/claim';
