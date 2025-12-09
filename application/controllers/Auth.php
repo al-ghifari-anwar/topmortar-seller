@@ -136,62 +136,52 @@ class Auth extends CI_Controller
             // Get Data Toko
             $getContact = $this->MContact->getById($id_contact);
             // Send Message
-            $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
-            $integration_id = $getQontak['integration_id'];
-            $wa_token = $getQontak['token'];
-            $template_id = '9241bf86-ae94-4aa8-8975-551409af90b9';
+            // $getQontak = $this->db->get_where('tb_qontak', ['id_distributor' => $id_distributor])->row_array();
+            // $integration_id = $getQontak['integration_id'];
+            // $wa_token = $getQontak['token'];
+            // $template_id = '9241bf86-ae94-4aa8-8975-551409af90b9';
 
             $message = "Gunakan kode OTP *" . $getOtp['otp'] . "* untuk melanjutkan proses pendaftaran akun. Kode ini berlaku selama 5 menit. Jangan bagikan kode ini kepada siapapun.";
 
+            $haloai = $this->db->get_where('tb_haloai', ['id_distributor' => 1])->row_array();
+            $wa_token = $haloai['token_haloai'];
+            $business_id = $haloai['business_id_haloai'];
+            $channel_id = $haloai['channel_id_haloai'];
+            $template = 'info_meeting_baru';
+
             $sender = "PT Top Mortar Indonesia";
+
+            $haloaiPayload = [
+                'activate_ai_after_send' => false,
+                'channel_id' => $channel_id,
+                'fallback_template_message' => $template,
+                'fallback_template_variables' => [
+                    $getContact['nama'],
+                    trim(preg_replace('/\s+/', ' ', $message)),
+                    $sender,
+                ],
+                'phone_number' => $getContact['nomorhp'],
+                'text' => trim(preg_replace('/\s+/', ' ', $message)),
+            ];
 
             $curl = curl_init();
 
-            curl_setopt_array(
-                $curl,
-                array(
-                    CURLOPT_URL => 'https://service-chat.qontak.com/api/open/v1/broadcasts/whatsapp/direct',
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_ENCODING => '',
-                    CURLOPT_MAXREDIRS => 10,
-                    CURLOPT_TIMEOUT => 0,
-                    CURLOPT_FOLLOWLOCATION => true,
-                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                    CURLOPT_CUSTOMREQUEST => 'POST',
-                    CURLOPT_POSTFIELDS => '{
-                    "to_number": "' . $getContact['nomorhp'] . '",
-                    "to_name": "' . $getContact['nama'] . '",
-                    "message_template_id": "' . $template_id . '",
-                    "channel_integration_id": "' . $integration_id . '",
-                    "language": {
-                        "code": "id"
-                    },
-                    "parameters": {
-                        "body": [
-                        {
-                            "key": "1",
-                            "value": "nama",
-                            "value_text": "' . $getContact['nama'] . '"
-                        },
-                        {
-                            "key": "2",
-                            "value": "message",
-                            "value_text": "' . $message . '"
-                        },
-                        {
-                            "key": "3",
-                            "value": "sender",
-                            "value_text": "' . $sender . '"
-                        }
-                        ]
-                    }
-                }',
-                    CURLOPT_HTTPHEADER => array(
-                        'Authorization: Bearer ' . $wa_token,
-                        'Content-Type: application/json'
-                    ),
-                )
-            );
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://www.haloai.co.id/api/open/channel/whatsapp/v1/sendMessageByPhoneSync',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($haloaiPayload),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . $wa_token,
+                    'X-HaloAI-Business-Id: ' . $business_id,
+                    'Content-Type: application/json'
+                ),
+            ));
 
             $response = curl_exec($curl);
 
