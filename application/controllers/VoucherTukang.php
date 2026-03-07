@@ -320,16 +320,26 @@ class VoucherTukang extends CI_Controller
                                             $wa_token = $haloai['token_haloai'];
                                             $business_id = $haloai['business_id_haloai'];
                                             $channel_id = $haloai['channel_id_haloai'];
-                                            $template = 'info_meeting_baru';
+                                            $template = 'notif_materi_img';
 
                                             $haloaiPayload = [
                                                 'activate_ai_after_send' => false,
                                                 'channel_id' => $channel_id,
                                                 'fallback_template_message' => $template,
+                                                'fallback_template_header' => [
+                                                    "filename" => "img_end_user.png",
+                                                    'type' => 'image',
+                                                    'url' => $img_tukang,
+                                                ],
                                                 'fallback_template_variables' => [
                                                     $nama_tukang,
                                                     trim(preg_replace('/\s+/', ' ', $message)),
                                                     "PT Top Mortar Indonesia",
+                                                ],
+                                                'media' => [
+                                                    "filename" => "img_end_user.png",
+                                                    'type' => 'image',
+                                                    'url' => $img_tukang,
                                                 ],
                                                 'phone_number' => $nomorhp_tukang,
                                                 'text' => trim(preg_replace('/\s+/', ' ', $message)),
