@@ -20,6 +20,7 @@ class Cart extends CI_Controller
         $this->load->model('HQontak');
         $this->load->model('MVoucher');
         $this->load->model('HHaloai');
+        $this->load->model('HTelegram');
     }
 
     public function get()
@@ -337,9 +338,11 @@ class Cart extends CI_Controller
 
                     $message = 'Pesanan perlu konfirm. Toko: *' . $contact['nama'] . '*. Status: *' . $contact['store_status'] . '*. Reputasi: *' . $contact['reputation'] . '*.';
 
-                    foreach ($adminNumbers as $adminNumber) {
-                        $this->HHaloai->sendNotifText($id_distributor, $adminNumber['to_number'], $adminNumber['to_name'], $template_id, $message, $from_name);
-                    }
+                    // foreach ($adminNumbers as $adminNumber) {
+                    //     $this->HHaloai->sendNotifText($id_distributor, $adminNumber['to_number'], $adminNumber['to_name'], $template_id, $message, $from_name);
+                    // }
+
+                    $this->HTelegram->sendText("-5279349973", $message);
 
                     $result = [
                         'code' => 200,
@@ -378,9 +381,10 @@ class Cart extends CI_Controller
 
                         $message = 'Pesanan perlu konfirm. Toko: *' . $contact['nama'] . '*. Status: *' . $contact['store_status'] . '*. Reputasi: *' . $contact['reputation'] . '*. Skor: *' . $res['total'] . '*.';
 
-                        foreach ($adminNumbers as $adminNumber) {
-                            $this->HHaloai->sendNotifText($id_distributor, $adminNumber['to_number'], $adminNumber['to_name'], $template_id, $message, $from_name);
-                        }
+                        // foreach ($adminNumbers as $adminNumber) {
+                        //     $this->HHaloai->sendNotifText($id_distributor, $adminNumber['to_number'], $adminNumber['to_name'], $template_id, $message, $from_name);
+                        // }
+                        $this->HTelegram->sendText("-5279349973", $message);
 
                         $result = [
                             'code' => 200,
