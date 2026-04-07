@@ -19,6 +19,8 @@ class Cart extends CI_Controller
         $this->load->model('MMasterProduk');
         $this->load->model('HQontak');
         $this->load->model('MVoucher');
+        $this->load->model('HHaloai');
+        $this->load->model('HTelegram');
     }
 
     public function get()
@@ -317,7 +319,7 @@ class Cart extends CI_Controller
 
                 $id_distributor = $contact['id_distributor'];
 
-                $template_id = '9241bf86-ae94-4aa8-8975-551409af90b9';
+                $template_id = 'info_meeting_baru';
 
                 $from_name = 'Top Mortar';
 
@@ -336,9 +338,11 @@ class Cart extends CI_Controller
 
                     $message = 'Pesanan perlu konfirm. Toko: *' . $contact['nama'] . '*. Status: *' . $contact['store_status'] . '*. Reputasi: *' . $contact['reputation'] . '*.';
 
-                    foreach ($adminNumbers as $adminNumber) {
-                        $this->HQontak->sendNotifText($id_distributor, $adminNumber['to_number'], $adminNumber['to_name'], $template_id, $message, $from_name);
-                    }
+                    // foreach ($adminNumbers as $adminNumber) {
+                    //     $this->HHaloai->sendNotifText($id_distributor, $adminNumber['to_number'], $adminNumber['to_name'], $template_id, $message, $from_name);
+                    // }
+
+                    $this->HTelegram->sendText("-5279349973", $message);
 
                     $result = [
                         'code' => 200,
@@ -377,9 +381,10 @@ class Cart extends CI_Controller
 
                         $message = 'Pesanan perlu konfirm. Toko: *' . $contact['nama'] . '*. Status: *' . $contact['store_status'] . '*. Reputasi: *' . $contact['reputation'] . '*. Skor: *' . $res['total'] . '*.';
 
-                        foreach ($adminNumbers as $adminNumber) {
-                            $this->HQontak->sendNotifText($id_distributor, $adminNumber['to_number'], $adminNumber['to_name'], $template_id, $message, $from_name);
-                        }
+                        // foreach ($adminNumbers as $adminNumber) {
+                        //     $this->HHaloai->sendNotifText($id_distributor, $adminNumber['to_number'], $adminNumber['to_name'], $template_id, $message, $from_name);
+                        // }
+                        $this->HTelegram->sendText("-5279349973", $message);
 
                         $result = [
                             'code' => 200,
