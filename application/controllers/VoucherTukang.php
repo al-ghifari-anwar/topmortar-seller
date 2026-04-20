@@ -382,6 +382,15 @@ class VoucherTukang extends CI_Controller
                                                 ];
 
                                                 return $this->output->set_output(json_encode($result));
+                                            } else {
+                                                $result = [
+                                                    'code' => 200,
+                                                    'status' => 'ok',
+                                                    'msg' => 'Claim voucher berhasil, dana telah masuk ke rekening / e-wallet anda',
+                                                    'error_notif' => $res,
+                                                ];
+
+                                                return $this->output->set_output(json_encode($result));
                                             }
                                         } else {
                                             $result = [
