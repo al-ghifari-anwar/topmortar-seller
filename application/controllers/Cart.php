@@ -438,7 +438,7 @@ class Cart extends CI_Controller
 
         $suratJalanData = [
             'id_apporder' => $id_apporder,
-            'no_surat_jalan' => "DO-" . rand(10000000, 99999999),
+            'no_surat_jalan' => "DO-SLR-" . rand(10000000, 99999999),
             'id_contact' => $id_contact,
             'dalivery_date' => date("Y-m-d H:i:s"),
             'order_number' => 0,
