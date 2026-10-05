@@ -4,6 +4,10 @@ class HTelegram extends CI_Model
 {
     public function sendText($chatId, $message)
     {
+        $tele = $this->db->get_where('tb_telegram')->row_array();
+
+        $apikey = $tele['api_key_telegram'];
+
         $curl = curl_init();
 
         $telegramPayload = [
@@ -12,7 +16,7 @@ class HTelegram extends CI_Model
         ];
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.telegram.org/bot8494834740:AAGU-lTH1_9mWAwIAIgICkn3mn9unb83nGk/sendMessage',
+            CURLOPT_URL => "https://api.telegram.org/bot$apikey/sendMessage",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
