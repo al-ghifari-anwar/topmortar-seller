@@ -48,7 +48,9 @@ class Produk extends CI_Controller
                         $produk['cart'] = array();
                     }
 
-                    array_push($arrayData, $produk);
+                    if ($masterProduk['is_top_seller'] == 1) {
+                        array_push($arrayData, $produk);
+                    }
                 }
 
                 if ($produks == null) {
