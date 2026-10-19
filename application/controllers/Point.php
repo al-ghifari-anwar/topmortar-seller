@@ -8,6 +8,32 @@ class Point extends CI_Controller
         $this->load->model('MPoint');
     }
 
+    public function index()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            $id_contact = $_GET['id_contact'];
+
+            $points = $this->MPoint->getPointByIdContact($id_contact);
+
+            $result = [
+                'code' => 200,
+                'status' => 'ok',
+                'msg' => 'Success',
+                'data' => $points
+            ];
+
+            $this->output->set_output(json_encode($result));
+        } else {
+            $result = [
+                'code' => 400,
+                'status' => 'failed',
+                'msg' => 'Not found',
+            ];
+
+            $this->output->set_output(json_encode($result));
+        }
+    }
+
     public function getTotal()
     {
         $this->output->set_content_type('application/json');
