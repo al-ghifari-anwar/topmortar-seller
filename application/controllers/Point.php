@@ -24,7 +24,7 @@ class Point extends CI_Controller
                 'data' => $points
             ];
 
-            $this->output->set_output(json_encode($result));
+            return $this->output->set_output(json_encode($result));
         } else {
             $result = [
                 'code' => 400,
@@ -32,7 +32,7 @@ class Point extends CI_Controller
                 'msg' => 'Not found',
             ];
 
-            $this->output->set_output(json_encode($result));
+            return $this->output->set_output(json_encode($result));
         }
     }
 
@@ -48,6 +48,16 @@ class Point extends CI_Controller
 
             $merchandise = $this->MMerchandise->getById($id_merchandise);
 
+            if (!$merchandise) {
+                $result = [
+                    'code' => 400,
+                    'status' => 'failed',
+                    'msg' => 'Merchandise tidak ditemukan',
+                ];
+
+                return $this->output->set_output(json_encode($result));
+            }
+
             $points = $this->MPoint->getTotalPointByIdContact($id_contact);
 
             if ($points['val_point'] < $price_merchandise) {
@@ -57,7 +67,7 @@ class Point extends CI_Controller
                     'msg' => 'Point tidak mencukupi',
                 ];
 
-                $this->output->set_output(json_encode($result));
+                return $this->output->set_output(json_encode($result));
             }
 
             $pointRedeemData = [
@@ -77,7 +87,7 @@ class Point extends CI_Controller
                     'msg' => 'Failed',
                 ];
 
-                $this->output->set_output(json_encode($result));
+                return $this->output->set_output(json_encode($result));
             } else {
                 $id_point_redeem = $this->db->insert_id();
 
@@ -98,7 +108,7 @@ class Point extends CI_Controller
                         'msg' => 'Not found',
                     ];
 
-                    $this->output->set_output(json_encode($result));
+                    return $this->output->set_output(json_encode($result));
                 } else {
                     $result = [
                         'code' => 200,
@@ -106,7 +116,7 @@ class Point extends CI_Controller
                         'msg' => 'Success redeem voucher',
                     ];
 
-                    $this->output->set_output(json_encode($result));
+                    return $this->output->set_output(json_encode($result));
                 }
             }
         } else {
@@ -116,7 +126,7 @@ class Point extends CI_Controller
                 'msg' => 'Not found',
             ];
 
-            $this->output->set_output(json_encode($result));
+            return $this->output->set_output(json_encode($result));
         }
     }
 
@@ -136,7 +146,7 @@ class Point extends CI_Controller
                 'data' => $point
             ];
 
-            $this->output->set_output(json_encode($result));
+            return $this->output->set_output(json_encode($result));
         } else {
             $result = [
                 'code' => 400,
@@ -144,7 +154,7 @@ class Point extends CI_Controller
                 'msg' => 'Not found',
             ];
 
-            $this->output->set_output(json_encode($result));
+            return $this->output->set_output(json_encode($result));
         }
     }
 }
