@@ -49,7 +49,7 @@ class Point extends CI_Controller
                 'id_contact' => $id_contact,
                 'id_merchandise' => $id_merchandise,
                 'val_point_redeem' => $val_point,
-                'desc_pont_redeem' => 'Penukaran Merchandise',
+                'desc_point_redeem' => 'Penukaran Merchandise',
                 'status_point_redeem' => 'Pending',
             ];
 
