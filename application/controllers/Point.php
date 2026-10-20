@@ -7,6 +7,7 @@ class Point extends CI_Controller
         parent::__construct();
         $this->load->model('MPoint');
         $this->load->model('MPointRedeem');
+        $this->load->model('MMerchandise');
     }
 
     public function index()
@@ -42,14 +43,28 @@ class Point extends CI_Controller
 
             $id_contact = $post['id_contact'];
             $id_merchandise = $post['id_merchandise'];
-            $val_point = $post['price_merchandise'];
+            $price_merchandise = $post['price_merchandise'];
             $source_point = 'Penukaran Merchandise';
+
+            $merchandise = $this->MMerchandise->getById($id_merchandise);
+
+            $points = $this->MPoint->getTotalPointByIdContact($id_contact);
+
+            if ($points['val_point'] < $price_merchandise) {
+                $result = [
+                    'code' => 400,
+                    'status' => 'failed',
+                    'msg' => 'Point tidak mencukupi',
+                ];
+
+                $this->output->set_output(json_encode($result));
+            }
 
             $pointRedeemData = [
                 'id_contact' => $id_contact,
                 'id_merchandise' => $id_merchandise,
-                'val_point_redeem' => $val_point,
-                'desc_point_redeem' => 'Penukaran Merchandise',
+                'val_point_redeem' => $price_merchandise,
+                'desc_point_redeem' => 'Penukaran Merchandise - ' . $merchandise['name_merchandise'],
                 'status_point_redeem' => 'Pending',
             ];
 
@@ -70,7 +85,7 @@ class Point extends CI_Controller
                     'id_contact' => $id_contact,
                     'id_invoice' => 0,
                     'source_point' => $source_point,
-                    'val_point' => (int)-$val_point,
+                    'val_point' => (int)-$price_merchandise,
                     'id_point_redeem' => $id_point_redeem,
                 ];
 
