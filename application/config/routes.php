@@ -114,4 +114,4 @@ $route['api/merchandise/(:num)'] = 'Merchandise/detail/$1';
 $route['api/voucher-toko'] = 'Voucher/index';
 $route['api/voucher-toko/claim'] = 'Voucher/claim';
 // Livechat
-$route['api/livchat/get-token'] = 'Livechat/getToken';
+$route['api/livechat/get-token'] = 'Livechat/getToken';
