@@ -44,7 +44,7 @@ class Livechat extends CI_Controller
 
             curl_close($curl);
 
-            $resArray = json_decode($response);
+            $resArray = json_decode($response, true);
 
             if ($resArray['status'] == "ok") {
                 $result = [
