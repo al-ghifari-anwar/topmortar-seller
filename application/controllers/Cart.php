@@ -203,14 +203,17 @@ class Cart extends CI_Controller
                     // Calculate Bonus
                     if ($cartDetail['is_default_promo'] == 1) {
                         if ($contact['id_promo'] != 0) {
+                            $promoList = $this->db->where('kelipatan_promo <=', $promo['kelipatan_promo'])->order_by('kelipatan_promo', 'DESC')->get('tb_promo')->result_array();
+
                             $qty_apporder_detail = $cartDetail['qty_cart_detail'];
                             $kelipatan_promo = $promo['kelipatan_promo'];
 
-                            $multiplier = $qty_apporder_detail / $kelipatan_promo;
+                            // $multiplier = $qty_apporder_detail / $kelipatan_promo;
+                            $bonusQty = $this->setBonusProgressive($qty_apporder_detail, $promoList);
 
-                            if (floor($multiplier) > 0) {
+                            if ($bonusQty > 0) {
                                 if ($contact['id_distributor'] != '6') {
-                                    $total_qty_bonus += floor($multiplier) * $promo['bonus_promo'];
+                                    $total_qty_bonus += $bonusQty * $promo['bonus_promo'];
 
                                     $apporderBonusDetailData = [
                                         'id_apporder' => $id_apporder,
@@ -219,7 +222,7 @@ class Cart extends CI_Controller
                                         'name_produk' => $cartDetail['nama_produk'],
                                         'is_bonus' => 1,
                                         'price_produk' => $cartDetail['harga_produk'],
-                                        'qty_apporder_detail' => floor($multiplier) * $promo['bonus_promo'],
+                                        'qty_apporder_detail' => $bonusQty * $promo['bonus_promo'],
                                         'total_apporder_detail' => 0,
                                     ];
 
@@ -228,14 +231,17 @@ class Cart extends CI_Controller
                             }
                         }
                     } else {
+                        $promoList = $this->db->where('kelipatan_promo <=', $promo['kelipatan_promo'])->order_by('kelipatan_promo', 'DESC')->get('tb_promo')->result_array();
+
                         $qty_apporder_detail = $cartDetail['qty_cart_detail'];
                         $kelipatan_promo = $cartDetail['kelipatan_promo'];
 
-                        $multiplier = $qty_apporder_detail / $kelipatan_promo;
+                        // $multiplier = $qty_apporder_detail / $kelipatan_promo;
+                        $bonusQty = $this->setBonusProgressive($qty_apporder_detail, $promoList);
 
-                        if (floor($multiplier) > 0) {
+                        if ($bonusQty > 0) {
                             if ($contact['id_distributor'] != '6') {
-                                $total_qty_bonus += floor($multiplier) * $cartDetail['bonus_promo'];
+                                $total_qty_bonus += $bonusQty * $cartDetail['bonus_promo'];
 
                                 $apporderBonusDetailData = [
                                     'id_apporder' => $id_apporder,
@@ -244,7 +250,7 @@ class Cart extends CI_Controller
                                     'name_produk' => $cartDetail['nama_produk'],
                                     'is_bonus' => 1,
                                     'price_produk' => $cartDetail['harga_produk'],
-                                    'qty_apporder_detail' => floor($multiplier) * $cartDetail['bonus_promo'],
+                                    'qty_apporder_detail' => $bonusQty * $cartDetail['bonus_promo'],
                                     'total_apporder_detail' => 0,
                                 ];
 
@@ -258,11 +264,15 @@ class Cart extends CI_Controller
                 if ($total_qty_bonus == 0) {
                     if ($cartDetail['is_default_promo'] == 1) {
                         if ($contact['id_promo'] != 0) {
-                            $kelipatan_promo = $promo['kelipatan_promo'];
+                            $promoList = $this->db->where('kelipatan_promo <=', $promo['kelipatan_promo'])->order_by('kelipatan_promo', 'DESC')->get('tb_promo')->result_array();
 
-                            $multiplier = $total_qty_cart_detail / $kelipatan_promo;
+                            // $kelipatan_promo = $promo['kelipatan_promo'];
 
-                            if (floor($multiplier) > 0) {
+                            // $multiplier = $total_qty_cart_detail / $kelipatan_promo;
+
+                            $bonusQty = $this->setBonusProgressive($qty_apporder_detail, $promoList);
+
+                            if ($bonusQty > 0) {
                                 $cheapestProduk = $this->MCartDetail->getCheapestByIdCart($id_cart);
 
                                 if ($contact['id_distributor'] != '6') {
@@ -273,7 +283,7 @@ class Cart extends CI_Controller
                                         'name_produk' => $cheapestProduk['nama_produk'],
                                         'is_bonus' => 1,
                                         'price_produk' => $cheapestProduk['harga_produk'],
-                                        'qty_apporder_detail' => floor($multiplier) * $promo['bonus_promo'],
+                                        'qty_apporder_detail' => $bonusQty * $promo['bonus_promo'],
                                         'total_apporder_detail' => 0,
                                     ];
 
@@ -551,5 +561,31 @@ class Cart extends CI_Controller
 
             return $this->output->set_output(json_encode($result));
         }
+    }
+
+    public function setBonusProgressive($qty, $promoList)
+    {
+        $sisaQty   = $qty;
+        $totalBonus = 0;
+
+        foreach ($promoList as $promo) {
+            // if ($sisaQty > 0 && $sisaQty < 10) {
+            //     $totalBonus += 1;
+            //     $sisaQty    -= $sisaQty;
+            // }
+
+            if ($sisaQty < $promo['kelipatan_promo']) {
+                continue;
+            }
+
+            $kelipatan = floor($sisaQty / $promo['kelipatan_promo']);
+
+            if ($kelipatan > 0) {
+                $totalBonus += $kelipatan * $promo['bonus_promo'];
+                $sisaQty    -= $kelipatan * $promo['kelipatan_promo'];
+            }
+        }
+
+        return $totalBonus;
     }
 }
