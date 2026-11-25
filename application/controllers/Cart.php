@@ -213,7 +213,7 @@ class Cart extends CI_Controller
 
                             if ($bonusQty > 0) {
                                 if ($contact['id_distributor'] != '6') {
-                                    $total_qty_bonus += $bonusQty * $promo['bonus_promo'];
+                                    $total_qty_bonus += $bonusQty;
 
                                     $apporderBonusDetailData = [
                                         'id_apporder' => $id_apporder,
@@ -222,7 +222,7 @@ class Cart extends CI_Controller
                                         'name_produk' => $cartDetail['nama_produk'],
                                         'is_bonus' => 1,
                                         'price_produk' => $cartDetail['harga_produk'],
-                                        'qty_apporder_detail' => $bonusQty * $promo['bonus_promo'],
+                                        'qty_apporder_detail' => $bonusQty,
                                         'total_apporder_detail' => 0,
                                     ];
 
@@ -241,7 +241,7 @@ class Cart extends CI_Controller
 
                         if ($bonusQty > 0) {
                             if ($contact['id_distributor'] != '6') {
-                                $total_qty_bonus += $bonusQty * $cartDetail['bonus_promo'];
+                                $total_qty_bonus += $bonusQty;
 
                                 $apporderBonusDetailData = [
                                     'id_apporder' => $id_apporder,
@@ -250,7 +250,7 @@ class Cart extends CI_Controller
                                     'name_produk' => $cartDetail['nama_produk'],
                                     'is_bonus' => 1,
                                     'price_produk' => $cartDetail['harga_produk'],
-                                    'qty_apporder_detail' => $bonusQty * $cartDetail['bonus_promo'],
+                                    'qty_apporder_detail' => $bonusQty,
                                     'total_apporder_detail' => 0,
                                 ];
 
@@ -283,7 +283,7 @@ class Cart extends CI_Controller
                                         'name_produk' => $cheapestProduk['nama_produk'],
                                         'is_bonus' => 1,
                                         'price_produk' => $cheapestProduk['harga_produk'],
-                                        'qty_apporder_detail' => $bonusQty * $promo['bonus_promo'],
+                                        'qty_apporder_detail' => $bonusQty,
                                         'total_apporder_detail' => 0,
                                     ];
 
