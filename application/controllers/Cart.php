@@ -236,12 +236,12 @@ class Cart extends CI_Controller
                         $qty_apporder_detail = $cartDetail['qty_cart_detail'];
                         $kelipatan_promo = $cartDetail['kelipatan_promo'];
 
-                        // $multiplier = $qty_apporder_detail / $kelipatan_promo;
-                        $bonusQty = $this->setBonusProgressive($qty_apporder_detail, $promoList);
+                        $multiplier = $qty_apporder_detail / $kelipatan_promo;
+                        // $bonusQty = $this->setBonusProgressive($qty_apporder_detail, $promoList);
 
-                        if ($bonusQty > 0) {
+                        if (floor($multiplier) > 0) {
                             if ($contact['id_distributor'] != '6') {
-                                $total_qty_bonus += $bonusQty;
+                                $total_qty_bonus += floor($multiplier);
 
                                 $apporderBonusDetailData = [
                                     'id_apporder' => $id_apporder,
@@ -250,7 +250,7 @@ class Cart extends CI_Controller
                                     'name_produk' => $cartDetail['nama_produk'],
                                     'is_bonus' => 1,
                                     'price_produk' => $cartDetail['harga_produk'],
-                                    'qty_apporder_detail' => $bonusQty,
+                                    'qty_apporder_detail' => floor($multiplier) * $cartDetail['bonus_promo'],
                                     'total_apporder_detail' => 0,
                                 ];
 
